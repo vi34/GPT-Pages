@@ -25,43 +25,82 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Materialize generated forest image
+      - name: Add generated forest image from Drive
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import base64
           import re
+          import urllib.request
+          import http.cookiejar
 
+          drive_file_id = '11GE1NmyHOA3lpFvTFFDZeEc37FsK8ZOj'
           site = Path('docs')
-          b64_path = site / 'assets' / 'forest-dark.b64'
-          jpg_path = site / 'assets' / 'forest-dark.jpg'
+          image_path = site / 'assets' / 'dante-inferno-dark-forest.png'
+          old_b64_path = site / 'assets' / 'forest-dark.b64'
+          old_jpg_path = site / 'assets' / 'forest-dark.jpg'
           html_path = site / 'index.html'
+
+          def download_drive_file(file_id: str) -> bytes:
+              opener = urllib.request.build_opener(
+                  urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar())
+              )
+              url = f'https://drive.google.com/uc?export=download&id={file_id}'
+              with opener.open(url, timeout=90) as response:
+                  data = response.read()
+                  content_type = response.headers.get('Content-Type', '')
+
+              looks_like_html = data.lstrip().startswith((b'<!DOCTYPE', b'<html')) or 'text/html' in content_type
+              if looks_like_html:
+                  html = data.decode('utf-8', errors='ignore')
+                  match = re.search(r'href="(/uc\?export=download&amp;confirm=[^"]+)"', html)
+                  if match:
+                      confirm_url = 'https://drive.google.com' + match.group(1).replace('&amp;', '&')
+                      with opener.open(confirm_url, timeout=90) as response:
+                          data = response.read()
+
+              if not data.startswith(b'\x89PNG\r\n\x1a\n'):
+                  raise RuntimeError(f'Downloaded file is not a PNG. First bytes: {data[:40]!r}')
+              return data
+
+          image_path.parent.mkdir(parents=True, exist_ok=True)
+          image_path.write_bytes(download_drive_file(drive_file_id))
 
           html = html_path.read_text(encoding='utf-8')
           html = html.replace(
               '.route-bg svg { width: 100%; height: 100%; display: block; object-fit: cover; }',
               '.route-bg svg, .route-bg img { width: 100%; height: 100%; display: block; object-fit: cover; }',
           )
-          html = re.sub(
+          html = html.replace(
+              '.route-bg svg, .route-bg img { width: 100%; height: 100%; display: block; object-fit: cover; }',
+              '.route-bg svg, .route-bg img { width: 100%; height: 100%; display: block; object-fit: cover; }',
+          )
+          html, count_svg = re.subn(
               r"forest:\s*`<svg[\s\S]*?</svg>`",
-              "forest: `<img src='assets/forest-dark.jpg' alt='Тёмный лес'>`",
+              "forest: `<img src='assets/dante-inferno-dark-forest.png' alt='Тёмный лес'>`",
               html,
               count=1,
           )
+          if count_svg == 0:
+              html, count_img = re.subn(
+                  r"forest:\s*`<img[^`]+>`",
+                  "forest: `<img src='assets/dante-inferno-dark-forest.png' alt='Тёмный лес'>`",
+                  html,
+                  count=1,
+              )
+              if count_img != 1:
+                  raise RuntimeError('Could not update forest scene in index.html')
           html_path.write_text(html, encoding='utf-8')
 
-          if b64_path.exists():
-              compact = ''.join(b64_path.read_text(encoding='utf-8').split())
-              jpg_path.parent.mkdir(parents=True, exist_ok=True)
-              jpg_path.write_bytes(base64.b64decode(compact))
+          old_b64_path.unlink(missing_ok=True)
+          old_jpg_path.unlink(missing_ok=True)
           PY
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/index.html docs/assets/forest-dark.jpg .github/workflows/pages.yml
-          git rm -f docs/assets/forest-dark.b64 || true
+          git add docs/index.html docs/assets/dante-inferno-dark-forest.png .github/workflows/pages.yml
+          git rm -f docs/assets/forest-dark.b64 docs/assets/forest-dark.jpg || true
           if ! git diff --cached --quiet; then
-            git commit -m "Materialize generated forest image"
+            git commit -m "Add generated dark forest image"
             git push
           fi
       - name: Upload artifact
