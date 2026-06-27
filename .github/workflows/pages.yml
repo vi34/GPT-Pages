@@ -25,31 +25,39 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Prepare generated images
+      - name: Prepare generated forest image
         run: |
-          mkdir -p docs/assets
-          base64 -d docs/assets/forest-dark.b64 > docs/assets/forest-dark.jpg
           python3 - <<'PY'
           from pathlib import Path
+          import base64
           import re
 
-          path = Path('docs/index.html')
-          html = path.read_text(encoding='utf-8')
+          site = Path('docs')
+          b64_path = site / 'assets' / 'forest-dark.b64'
+          jpg_path = site / 'assets' / 'forest-dark.jpg'
+          html_path = site / 'index.html'
 
+          jpg_path.parent.mkdir(parents=True, exist_ok=True)
+          raw = b64_path.read_text(encoding='utf-8')
+          compact = ''.join(raw.split())
+          jpg_path.write_bytes(base64.b64decode(compact))
+
+          html = html_path.read_text(encoding='utf-8')
           html = html.replace(
-              ".route-bg svg { width: 100%; height: 100%; display: block; object-fit: cover; }",
-              ".route-bg svg, .route-bg img { width: 100%; height: 100%; display: block; object-fit: cover; }",
+              '.route-bg svg { width: 100%; height: 100%; display: block; object-fit: cover; }',
+              '.route-bg svg, .route-bg img { width: 100%; height: 100%; display: block; object-fit: cover; }',
           )
-
-          pattern = r"forest: `<svg viewBox='0 0 1600 900' preserveAspectRatio='xMidYMid slice'>.*?</svg>`"
-          replacement = "forest: `<img src='assets/forest-dark.jpg' alt='Тёмный лес'>`"
-          html, count = re.subn(pattern, replacement, html, count=1, flags=re.S)
+          html, count = re.subn(
+              r"forest:\s*`<svg[\s\S]*?</svg>`",
+              "forest: `<img src='assets/forest-dark.jpg' alt='Тёмный лес'>`",
+              html,
+              count=1,
+          )
           if count != 1:
-              raise SystemExit('Could not replace the dark forest scene')
-
-          path.write_text(html, encoding='utf-8')
+              raise RuntimeError(f'Expected to replace exactly one forest scene, replaced {count}')
+          html_path.write_text(html, encoding='utf-8')
+          b64_path.unlink(missing_ok=True)
           PY
-          rm docs/assets/forest-dark.b64
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
