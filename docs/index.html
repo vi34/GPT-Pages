@@ -17,7 +17,7 @@
       --purgatorio: #f3b64c;
       --paradiso: #77d7ff;
       --accent: #caa46a;
-      --ok: #9ee6aa;
+      --green: #9ee6aa;
       --shadow: 0 24px 80px rgba(0,0,0,.35);
     }
     * { box-sizing: border-box; }
@@ -38,7 +38,7 @@
     .hero { padding: 56px 0 30px; position: relative; overflow: hidden; }
     .hero-grid { display: grid; grid-template-columns: 1.08fr .92fr; gap: 26px; align-items: stretch; }
     .card {
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.035));
       border: 1px solid var(--line);
       border-radius: 28px;
       box-shadow: var(--shadow);
@@ -78,12 +78,23 @@
     .panel { padding: 24px; }
     .map-card { position: sticky; top: 14px; overflow: hidden; }
     .map-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
-    .pill { border: 1px solid var(--line); background: rgba(255,255,255,.05); color: var(--muted); padding: 7px 10px; border-radius: 999px; font-size: .9rem; }
-    .cosmos { width: 100%; aspect-ratio: 1; display: grid; place-items: center; position: relative; margin: 6px auto 14px; }
-    .ring { position: absolute; border: 1px solid rgba(255,255,255,.18); border-radius: 50%; display: grid; place-items: center; transition: .25s ease; }
-    .ring:hover { border-color: rgba(255,255,255,.48); transform: scale(1.01); }
-    .center-orb { width: 20%; height: 20%; border-radius: 50%; background: radial-gradient(circle, #f7efe0, #caa46a 58%, transparent 62%); box-shadow: 0 0 42px rgba(202,164,106,.35); display: grid; place-items: center; color: #1a1210; font-weight: 900; }
-    .legend { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+    .pill { border: 1px solid var(--line); background: rgba(255,255,255,.05); color: var(--muted); padding: 7px 10px; border-radius: 999px; font-size: .9rem; white-space: nowrap; }
+    .visual-copy { margin-bottom: 12px; }
+    .visual-copy h3 { margin-bottom: 3px; }
+    .svg-stage {
+      width: 100%;
+      min-height: 310px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: radial-gradient(circle at 50% 30%, rgba(255,255,255,.10), transparent 52%), rgba(0,0,0,.18);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      margin: 12px 0 14px;
+    }
+    .svg-stage svg { width: min(100%, 430px); height: auto; display: block; }
+    .caption { color: var(--muted); font-size: .92rem; }
+    .legend { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 12px; }
     .legend span { display: flex; gap: 8px; align-items: center; color: var(--muted); font-size: .92rem; }
     .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
     .dot.i { background: var(--inferno); } .dot.p { background: var(--purgatorio); } .dot.r { background: var(--paradiso); }
@@ -107,6 +118,9 @@
     .kv { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin-top: 16px; }
     .mini { padding: 15px; border: 1px solid var(--line); border-radius: 18px; background: rgba(0,0,0,.16); }
     .mini b { display: block; margin-bottom: 6px; color: var(--accent); }
+    .part-facts { margin-top: 16px; display: grid; gap: 10px; }
+    .factline { display: grid; grid-template-columns: 32px 1fr; gap: 10px; align-items: start; padding: 12px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.04); }
+    .factline .spark { width: 32px; height: 32px; border-radius: 11px; display: grid; place-items: center; background: rgba(255,255,255,.07); }
     .path { display: grid; gap: 12px; }
     .step { display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: start; }
     .step .mark { width: 44px; height: 44px; border-radius: 16px; display: grid; place-items: center; background: rgba(255,255,255,.07); border: 1px solid var(--line); font-weight: 900; }
@@ -120,21 +134,30 @@
     input { width: 100%; border: 1px solid var(--line); border-radius: 16px; padding: 13px 14px; background: rgba(255,255,255,.06); color: var(--text); outline: none; }
     .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
     .chip { border: 1px solid var(--line); border-radius: 999px; padding: 6px 9px; color: var(--muted); font-size: .88rem; }
+    .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .figure-card { padding: 16px; border: 1px solid var(--line); border-radius: 24px; background: rgba(255,255,255,.045); }
+    .figure-card .svg-stage { min-height: 240px; margin: 10px 0; }
+    .facts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 14px; }
+    .fact-card { padding: 16px; border-radius: 20px; background: rgba(255,255,255,.045); border: 1px solid var(--line); }
+    .fact-card strong { display: block; margin-bottom: 7px; color: var(--accent); }
     .footer { color: var(--muted); padding: 30px 0 54px; }
     .fade { animation: fade .22s ease both; }
     @keyframes fade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
-    @media (max-width: 900px) {
-      .hero-grid, .split, .columns { grid-template-columns: 1fr; }
+    @media (max-width: 1000px) {
+      .hero-grid, .split, .columns, .gallery { grid-template-columns: 1fr; }
       .map-card { position: static; }
-      .stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .stats, .facts-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
     }
     @media (max-width: 560px) {
       .wrap { width: min(100% - 20px, 1180px); }
       .hero { padding-top: 28px; }
       .hero-copy, .panel { padding: 18px; border-radius: 22px; }
-      .stats, .kv, .legend { grid-template-columns: 1fr; }
+      .stats, .kv, .legend, .facts-grid { grid-template-columns: 1fr; }
       .node { grid-template-columns: auto 1fr; }
       .node .small:last-child { grid-column: 2; }
+      .detail-top { display: block; }
+      .detail-top .pill { display: inline-flex; margin-top: 10px; }
+      .svg-stage { min-height: 250px; }
     }
   </style>
 </head>
@@ -144,11 +167,12 @@
       <section class='card hero-copy'>
         <div class='eyebrow'>Dante Alighieri · 1300 · путь души</div>
         <h1>Божественная комедия</h1>
-        <p class='lead'>Интерактивная карта поэмы: спуск через воронку Ада, восхождение на гору Чистилища и подъём через небеса Рая. Нажимай на уровни, чтобы увидеть смысл, персонажей и внутреннюю логику каждой части.</p>
+        <p class='lead'>Интерактивная карта поэмы: спуск через воронку Ада, восхождение на гору Чистилища и подъём через небеса Рая. Нажимай на уровни, чтобы увидеть смысл, персонажей, факты и внутреннюю логику каждой части.</p>
         <div class='hero-actions'>
           <a class='btn' href='#map'>Открыть карту</a>
+          <a class='btn' href='#gallery'>Схемы миров</a>
+          <a class='btn' href='#facts'>Интересные факты</a>
           <a class='btn' href='#route'>Маршрут героя</a>
-          <a class='btn' href='#keys'>Ключи к чтению</a>
         </div>
       </section>
       <aside class='card stats' aria-label='Ключевые числа поэмы'>
@@ -168,16 +192,9 @@
             <h2>Космография</h2>
             <span id='modePill' class='pill'>Ад</span>
           </div>
-          <div class='cosmos' aria-hidden='true'>
-            <div class='ring' style='width:94%;height:94%;border-color:rgba(119,215,255,.36)'></div>
-            <div class='ring' style='width:82%;height:82%;border-color:rgba(119,215,255,.30)'></div>
-            <div class='ring' style='width:70%;height:70%;border-color:rgba(119,215,255,.25)'></div>
-            <div class='ring' style='width:58%;height:58%;border-color:rgba(243,182,76,.30)'></div>
-            <div class='ring' style='width:46%;height:46%;border-color:rgba(243,182,76,.38)'></div>
-            <div class='ring' style='width:34%;height:34%;border-color:rgba(255,92,69,.36)'></div>
-            <div class='ring' style='width:24%;height:24%;border-color:rgba(255,92,69,.48)'></div>
-            <div class='center-orb'>D</div>
-          </div>
+          <div id='visualCopy' class='visual-copy'></div>
+          <div id='visual' class='svg-stage' aria-label='Схема выбранного мира'></div>
+          <p id='visualCaption' class='caption'></p>
           <div class='legend'>
             <span><i class='dot i'></i>падение</span>
             <span><i class='dot p'></i>очищение</span>
@@ -186,7 +203,7 @@
           <div class='searchbox'>
             <input id='search' type='search' placeholder='Поиск: Вергилий, Беатриче, гордыня, Лимб…'>
           </div>
-          <p class='small'>Подсказка: можно искать по персонажам, темам и названиям уровней.</p>
+          <p class='small'>Теперь у каждой части своя схема: воронка, гора или небесные сферы.</p>
         </aside>
 
         <section class='card panel'>
@@ -203,6 +220,35 @@
     <section class='section'>
       <div class='wrap'>
         <article id='detail' class='card panel detail'></article>
+      </div>
+    </section>
+
+    <section id='gallery' class='section'>
+      <div class='wrap'>
+        <div class='card panel'>
+          <h2>Три разных мира — три разные картинки</h2>
+          <p class='lead'>Прошлая версия ошибочно показывала одну декоративную «космографию» для всего. Здесь визуальная логика разделена: Ад — сужающаяся воронка, Чистилище — гора с террасами, Рай — концентрические небеса.</p>
+          <div id='galleryGrid' class='gallery'></div>
+        </div>
+      </div>
+    </section>
+
+    <section id='facts' class='section'>
+      <div class='wrap'>
+        <div class='card panel'>
+          <h2>Интересные факты</h2>
+          <p class='lead'>Несколько быстрых ключей, которые делают поэму понятнее при первом чтении.</p>
+          <div class='facts-grid'>
+            <div class='fact-card'><strong>Почему 100 песен?</strong><p class='small'>Структура почти математическая: вводная песнь + по 33 песни в каждой из трёх частей. Число 3 постоянно возвращается в форме и смысле.</p></div>
+            <div class='fact-card'><strong>Терцины</strong><p class='small'>Поэма написана цепной строфой: рифмы сцепляются как звенья пути. Форма буквально тянет читателя вперёд.</p></div>
+            <div class='fact-card'><strong>Ад в центре холодный</strong><p class='small'>Самый низ Ада — не пылающий котёл, а ледяная неподвижность. Худшее зло у Данте связано с холодным предательством.</p></div>
+            <div class='fact-card'><strong>Вергилий не входит в Рай</strong><p class='small'>Он символизирует разум и античную мудрость. Этого достаточно для первых двух миров, но не для финального созерцания.</p></div>
+            <div class='fact-card'><strong>Чистилище — мир времени</strong><p class='small'>В Аду души застыли, в Раю пребывают в полноте, а в Чистилище реально происходит изменение.</p></div>
+            <div class='fact-card'><strong>Беатриче — не просто возлюбленная</strong><p class='small'>В поэме она становится фигурой благодати, истины и высшего зрения, которое превосходит одного только Вергилия.</p></div>
+            <div class='fact-card'><strong>Политика внутри космоса</strong><p class='small'>Данте постоянно вплетает флорентийские распри, изгнание и размышления о власти в огромную картину мироздания.</p></div>
+            <div class='fact-card'><strong>Рай сложнее, чем кажется</strong><p class='small'>Это не просто «награда», а попытка показать, как разные души могут быть счастливы без зависти и конкуренции.</p></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -245,14 +291,107 @@
 
   <footer class='footer'>
     <div class='wrap'>
-      Инфографика создана как учебный интерактивный конспект. Текст поэмы здесь пересказан, а не цитируется: можно свободно дорабатывать сайт в репозитории GPT-Pages.
+      Инфографика создана как учебный интерактивный конспект. Иллюстрации — встроенные SVG-схемы, поэтому сайт не зависит от внешних изображений и быстро открывается на GitHub Pages.
     </div>
   </footer>
 
   <script>
+    const art = {
+      inferno: `
+        <svg viewBox='0 0 420 360' role='img' aria-label='Воронка Ада'>
+          <defs>
+            <linearGradient id='hellGrad' x1='0' x2='0' y1='0' y2='1'>
+              <stop offset='0%' stop-color='#ff7b4b' stop-opacity='.95'/>
+              <stop offset='55%' stop-color='#a62e2e' stop-opacity='.82'/>
+              <stop offset='100%' stop-color='#25101b' stop-opacity='1'/>
+            </linearGradient>
+            <filter id='glowHell'><feGaussianBlur stdDeviation='3.2' result='b'/><feMerge><feMergeNode in='b'/><feMergeNode in='SourceGraphic'/></feMerge></filter>
+          </defs>
+          <rect width='420' height='360' fill='transparent'/>
+          <path d='M35 40 L385 40 L245 322 L175 322 Z' fill='url(#hellGrad)' opacity='.28'/>
+          <g fill='none' stroke='rgba(255,240,210,.34)' stroke-width='2'>
+            <path d='M51 68 Q210 110 369 68'/>
+            <path d='M70 96 Q210 136 350 96'/>
+            <path d='M90 124 Q210 160 330 124'/>
+            <path d='M109 151 Q210 184 311 151'/>
+            <path d='M127 178 Q210 207 293 178'/>
+            <path d='M145 205 Q210 230 275 205'/>
+            <path d='M161 232 Q210 250 259 232'/>
+            <path d='M175 258 Q210 273 245 258'/>
+            <path d='M188 286 Q210 295 232 286'/>
+          </g>
+          <g font-family='system-ui, sans-serif' font-size='13' fill='#f7efe0' text-anchor='middle'>
+            <text x='210' y='61'>1 Лимб</text><text x='210' y='90'>2 Похоть</text><text x='210' y='119'>3 Чревоугодие</text><text x='210' y='148'>4 Алчность</text><text x='210' y='176'>5 Гнев</text><text x='210' y='204'>6 Ересь</text><text x='210' y='231'>7 Насилие</text><text x='210' y='258'>8 Обман</text><text x='210' y='288'>9 Предательство</text>
+          </g>
+          <g filter='url(#glowHell)'>
+            <path d='M184 324 C190 302 201 308 204 286 C214 306 232 305 235 326 C226 315 219 330 210 337 C202 327 194 315 184 324Z' fill='#ff5c45'/>
+            <circle cx='210' cy='326' r='9' fill='#1a0c12' stroke='#ffb199'/>
+          </g>
+          <text x='210' y='342' text-anchor='middle' fill='#b8ad9d' font-size='13'>вниз: от слабости к холодному предательству</text>
+        </svg>`,
+      purgatorio: `
+        <svg viewBox='0 0 420 360' role='img' aria-label='Гора Чистилища'>
+          <defs>
+            <linearGradient id='mountGrad' x1='0' x2='0' y1='1' y2='0'>
+              <stop offset='0%' stop-color='#3b2a27'/><stop offset='55%' stop-color='#9b6a36'/><stop offset='100%' stop-color='#f3d486'/>
+            </linearGradient>
+            <linearGradient id='skyPur' x1='0' x2='0' y1='0' y2='1'>
+              <stop offset='0%' stop-color='#1b3154' stop-opacity='.65'/><stop offset='100%' stop-color='#191522' stop-opacity='0'/>
+            </linearGradient>
+          </defs>
+          <rect width='420' height='360' fill='url(#skyPur)'/>
+          <circle cx='338' cy='50' r='28' fill='#f6d88f' opacity='.85'/>
+          <path d='M55 326 L210 35 L365 326 Z' fill='url(#mountGrad)' opacity='.58' stroke='rgba(255,240,210,.22)'/>
+          <g fill='none' stroke='rgba(255,240,210,.56)' stroke-width='6' stroke-linecap='round'>
+            <path d='M102 276 C150 290 270 290 318 276'/>
+            <path d='M118 246 C160 260 260 260 302 246'/>
+            <path d='M134 216 C170 230 250 230 286 216'/>
+            <path d='M150 186 C180 199 240 199 270 186'/>
+            <path d='M166 156 C190 167 230 167 254 156'/>
+            <path d='M181 126 C196 134 224 134 239 126'/>
+            <path d='M195 96 C202 101 218 101 225 96'/>
+          </g>
+          <g font-family='system-ui, sans-serif' font-size='12' fill='#f7efe0'>
+            <text x='322' y='280'>1 гордыня</text><text x='303' y='250'>2 зависть</text><text x='287' y='220'>3 гнев</text><text x='270' y='190'>4 лень</text><text x='253' y='160'>5 алчность</text><text x='239' y='130'>6 чревоугодие</text><text x='224' y='101'>7 похоть</text>
+          </g>
+          <path d='M182 78 Q210 45 238 78 Q210 66 182 78Z' fill='#9ee6aa' opacity='.9'/>
+          <text x='210' y='61' text-anchor='middle' fill='#f7efe0' font-size='13'>Земной рай</text>
+          <path d='M80 326 C120 306 300 306 340 326' fill='none' stroke='#77d7ff' stroke-width='4' opacity='.65'/>
+          <text x='210' y='344' text-anchor='middle' fill='#b8ad9d' font-size='13'>вверх: очищение желания и восстановление свободы</text>
+        </svg>`,
+      paradiso: `
+        <svg viewBox='0 0 420 360' role='img' aria-label='Небеса Рая'>
+          <defs>
+            <radialGradient id='heavenGrad' cx='50%' cy='50%' r='60%'>
+              <stop offset='0%' stop-color='#fff6ca'/><stop offset='35%' stop-color='#77d7ff' stop-opacity='.32'/><stop offset='100%' stop-color='#151525' stop-opacity='0'/>
+            </radialGradient>
+            <filter id='softGlow'><feGaussianBlur stdDeviation='2.8' result='b'/><feMerge><feMergeNode in='b'/><feMergeNode in='SourceGraphic'/></feMerge></filter>
+          </defs>
+          <rect width='420' height='360' fill='transparent'/>
+          <circle cx='210' cy='180' r='150' fill='url(#heavenGrad)'/>
+          <g fill='none' stroke='rgba(119,215,255,.54)' stroke-width='1.6'>
+            <circle cx='210' cy='180' r='28'/><circle cx='210' cy='180' r='44'/><circle cx='210' cy='180' r='60'/><circle cx='210' cy='180' r='78'/><circle cx='210' cy='180' r='96'/><circle cx='210' cy='180' r='114'/><circle cx='210' cy='180' r='132'/><circle cx='210' cy='180' r='150'/>
+          </g>
+          <g fill='#f7efe0' font-size='10' font-family='system-ui, sans-serif'>
+            <text x='222' y='154'>Луна</text><text x='253' y='172'>Меркурий</text><text x='261' y='130'>Венера</text><text x='285' y='204'>Солнце</text><text x='151' y='111'>Марс</text><text x='117' y='199'>Юпитер</text><text x='266' y='74'>Сатурн</text><text x='72' y='107'>Звёзды</text><text x='247' y='313'>Перводвигатель</text>
+          </g>
+          <g filter='url(#softGlow)'>
+            <circle cx='210' cy='180' r='16' fill='#fff6ca'/>
+            <circle cx='277' cy='109' r='4' fill='#77d7ff'/><circle cx='112' cy='153' r='3' fill='#fff6ca'/><circle cx='327' cy='237' r='3' fill='#77d7ff'/><circle cx='174' cy='52' r='3' fill='#fff6ca'/><circle cx='92' cy='260' r='3' fill='#77d7ff'/>
+          </g>
+          <path d='M130 300 C185 332 258 331 316 293' fill='none' stroke='rgba(255,246,202,.6)' stroke-width='2'/>
+          <text x='210' y='342' text-anchor='middle' fill='#b8ad9d' font-size='13'>наружу: рост света, согласия и созерцания</text>
+        </svg>`
+    };
+
     const data = {
       inferno: {
-        name: 'Ад', icon: '🔥', color: 'var(--inferno)', idea: 'Мир застывшего выбора: чем ниже, тем сознательнее и холоднее зло.',
+        name: 'Ад', icon: '🔥', color: 'var(--inferno)',
+        visualTitle: 'Ад — не круглая орбита, а воронка вниз',
+        visualSubtitle: 'Он устроен как сужающийся провал под Иерусалимом. Чем ниже Данте спускается, тем меньше движения и живой любви.',
+        caption: 'Круги Ада — это не просто этажи наказаний, а градация искажённой воли: от слабости и страсти к сознательному обману и предательству.',
+        idea: 'Мир застывшего выбора: чем ниже, тем сознательнее и холоднее зло.',
+        facts: ['В самом низу Ада у Данте лёд, а не огонь.', 'Люцифер находится в центре Земли, поэтому выход из Ада связан с буквальным переворотом направления.', 'Принцип контрапассо: наказание раскрывает внутреннюю форму греха.'],
         levels: [
           {n:'0', title:'Преддверие', sub:'нерешительность и духовная пустота', figures:'безымянные души, Харон', theme:'отказ от выбора', logic:'Данте начинает с людей, которые не стали ни добрыми, ни злыми: их жизнь прошла мимо смысла.', lesson:'Нейтральность в главных вопросах тоже становится выбором.'},
           {n:'1', title:'Лимб', sub:'добродетель без христианской надежды', figures:'Гомер, Гораций, Овидий, Саладин', theme:'границы разума', logic:'Здесь благородные нехристиане не мучимы в грубом смысле, но лишены полноты надежды.', lesson:'Античная мудрость велика, но для Данте она не завершает путь.'},
@@ -267,7 +406,12 @@
         ]
       },
       purgatorio: {
-        name: 'Чистилище', icon: '⛰️', color: 'var(--purgatorio)', idea: 'Мир надежды: душа страдает не бессмысленно, а учится заново любить.',
+        name: 'Чистилище', icon: '⛰️', color: 'var(--purgatorio)',
+        visualTitle: 'Чистилище — гора, а не подземелье',
+        visualSubtitle: 'Данте выходит из Ада к противоположной стороне Земли и поднимается по террасам. Это мир изменения, времени и надежды.',
+        caption: 'Семь террас соответствуют очищению семи корневых искажений любви: от гордыни и зависти до похоти. На вершине — Земной рай.',
+        idea: 'Мир надежды: душа страдает не бессмысленно, а учится заново любить.',
+        facts: ['Чистилище — единственная из трёх частей, где души реально меняются.', 'На горе звучат песни и молитвы: это мир общения, а не изоляции.', 'Вергилий доводит Данте до Земного рая, но дальше его сменяет Беатриче.'],
         levels: [
           {n:'A', title:'Предчистилище', sub:'порог перемены', figures:'Катон, Манфред, запоздало раскаявшиеся', theme:'начало надежды', logic:'Здесь находятся те, кто повернулся к добру поздно: путь начат, но требует времени.', lesson:'Даже поздний поворот важен, если он настоящий.'},
           {n:'1', title:'Гордыня', sub:'тяжесть раздутого Я', figures:'Одеризи, Омберто', theme:'смирение', logic:'Первой очищается любовь к собственному превосходству: она искривляет взгляд на всех остальных.', lesson:'Свобода начинается с правды о собственной мере.'},
@@ -281,7 +425,12 @@
         ]
       },
       paradiso: {
-        name: 'Рай', icon: '✨', color: 'var(--paradiso)', idea: 'Мир света: разные степени блаженства не конкурируют, потому что каждая душа согласна с целым.',
+        name: 'Рай', icon: '✨', color: 'var(--paradiso)',
+        visualTitle: 'Рай — небесные сферы и рост света',
+        visualSubtitle: 'Это средневековая геоцентрическая картина: Данте поднимается через небеса Луны, планет, звёзд и Перводвигателя к Эмпирею.',
+        caption: 'В Раю уровни не означают завистливую иерархию: каждая душа блаженна в своей мере, потому что её воля согласна с целым.',
+        idea: 'Мир света: разные степени блаженства не конкурируют, потому что каждая душа согласна с целым.',
+        facts: ['Рай трудно экранизировать: его драматургия строится не на монстрах, а на росте понимания.', 'Данте много говорит о политике даже в Раю: космос не отменяет земную справедливость.', 'Финальный Эмпирей уже не обычное место, а образ полноты смысла.'],
         levels: [
           {n:'1', title:'Луна', sub:'неустойчивые обеты', figures:'Пиккарда Донати', theme:'верность', logic:'Нижнее небо показывает слабость постоянства: добро было желанно, но не удержано до конца.', lesson:'Свобода требует устойчивости, а не только искреннего порыва.'},
           {n:'2', title:'Меркурий', sub:'добрые дела ради славы', figures:'Юстиниан', theme:'мотивы поступка', logic:'Здесь действие было великим, но примесь честолюбия уменьшала прозрачность любви.', lesson:'Даже добро меняет смысл в зависимости от мотива.'},
@@ -302,11 +451,34 @@
     const buttons = [...document.querySelectorAll('[data-part]')];
     const modePill = document.querySelector('#modePill');
     const search = document.querySelector('#search');
+    const visual = document.querySelector('#visual');
+    const visualCopy = document.querySelector('#visualCopy');
+    const visualCaption = document.querySelector('#visualCaption');
+    const galleryGrid = document.querySelector('#galleryGrid');
     let currentPart = 'inferno';
     let currentIndex = 0;
 
     function allLevels() {
       return Object.entries(data).flatMap(([part, obj]) => obj.levels.map((level, idx) => ({part, idx, ...level, partName: obj.name, icon: obj.icon})));
+    }
+
+    function renderVisual() {
+      const part = data[currentPart];
+      visual.innerHTML = art[currentPart];
+      visualCopy.innerHTML = `<h3>${part.visualTitle}</h3><p class='small'>${part.visualSubtitle}</p>`;
+      visualCaption.textContent = part.caption;
+      modePill.textContent = part.name;
+    }
+
+    function renderGallery() {
+      galleryGrid.innerHTML = Object.entries(data).map(([part, obj]) => `
+        <article class='figure-card'>
+          <h3>${obj.icon} ${obj.name}</h3>
+          <p class='small'>${obj.visualTitle}</p>
+          <div class='svg-stage'>${art[part]}</div>
+          <p class='caption'>${obj.caption}</p>
+        </article>
+      `).join('');
     }
 
     function renderList() {
@@ -323,7 +495,7 @@
       document.querySelectorAll('[data-open]').forEach(btn => btn.addEventListener('click', () => {
         const [part, idx] = btn.dataset.open.split(':');
         currentPart = part; currentIndex = Number(idx); search.value = '';
-        syncTabs(); renderList(); renderDetail();
+        syncTabs(); renderVisual(); renderList(); renderDetail();
         detail.scrollIntoView({behavior:'smooth', block:'start'});
       }));
     }
@@ -331,7 +503,6 @@
     function renderDetail() {
       const part = data[currentPart];
       const item = part.levels[currentIndex];
-      modePill.textContent = part.name;
       detail.className = 'card panel detail fade';
       detail.innerHTML = `
         <div class='detail-top'>
@@ -350,6 +521,9 @@
           <div class='mini'><b>Философская тема</b><p>${item.theme}</p></div>
           <div class='mini'><b>Что вынести</b><p>${item.lesson}</p></div>
         </div>
+        <div class='part-facts'>
+          ${part.facts.map((fact, index) => `<div class='factline'><span class='spark'>${index + 1}</span><p class='small'>${fact}</p></div>`).join('')}
+        </div>
       `;
       window.setTimeout(() => detail.classList.remove('fade'), 260);
     }
@@ -360,9 +534,11 @@
 
     buttons.forEach(btn => btn.addEventListener('click', () => {
       currentPart = btn.dataset.part; currentIndex = 0; search.value = '';
-      syncTabs(); renderList(); renderDetail();
+      syncTabs(); renderVisual(); renderList(); renderDetail();
     }));
     search.addEventListener('input', renderList);
+    renderGallery();
+    renderVisual();
     renderList();
     renderDetail();
   </script>
