@@ -1,41 +1,370 @@
 <!doctype html>
-<html lang="ru">
+<html lang='ru'>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GPT Pages Test</title>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <title>Божественная комедия Данте — интерактивная инфографика</title>
   <style>
-    :root { color-scheme: light dark; }
+    :root {
+      color-scheme: dark;
+      --bg: #100f14;
+      --paper: #18151f;
+      --paper-2: #211b2a;
+      --text: #f7efe0;
+      --muted: #b8ad9d;
+      --line: rgba(247,239,224,.16);
+      --inferno: #ff5c45;
+      --purgatorio: #f3b64c;
+      --paradiso: #77d7ff;
+      --accent: #caa46a;
+      --ok: #9ee6aa;
+      --shadow: 0 24px 80px rgba(0,0,0,.35);
+    }
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
-      min-height: 100vh;
       margin: 0;
-      display: grid;
-      place-items: center;
-      padding: 32px;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 10%, rgba(255,92,69,.20), transparent 28%),
+        radial-gradient(circle at 78% 22%, rgba(119,215,255,.15), transparent 28%),
+        radial-gradient(circle at 48% 82%, rgba(243,182,76,.15), transparent 30%),
+        var(--bg);
       line-height: 1.55;
-      background: radial-gradient(circle at top left, rgba(90, 120, 255, .18), transparent 38%), Canvas;
-      color: CanvasText;
     }
-    main {
-      width: min(760px, 100%);
-      border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
-      border-radius: 22px;
-      padding: 34px;
-      box-shadow: 0 18px 50px rgba(0,0,0,.08);
+    button, input { font: inherit; }
+    .wrap { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+    .hero { padding: 56px 0 30px; position: relative; overflow: hidden; }
+    .hero-grid { display: grid; grid-template-columns: 1.08fr .92fr; gap: 26px; align-items: stretch; }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
     }
-    h1 { margin-top: 0; font-size: clamp(2rem, 6vw, 4rem); line-height: 1.05; }
-    .muted { opacity: 0.72; }
-    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .hero-copy { padding: 34px; }
+    .eyebrow { color: var(--accent); letter-spacing: .12em; text-transform: uppercase; font-weight: 800; font-size: .78rem; }
+    h1 { font-size: clamp(2.45rem, 7vw, 6.8rem); line-height: .9; margin: 16px 0 20px; letter-spacing: -.065em; }
+    h2 { font-size: clamp(1.65rem, 4vw, 3.1rem); line-height: 1.02; margin: 0 0 14px; letter-spacing: -.04em; }
+    h3 { margin: 0 0 10px; font-size: 1.25rem; }
+    p { margin: 0; }
+    .lead { color: var(--muted); font-size: clamp(1rem, 2vw, 1.22rem); max-width: 65ch; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+    .btn {
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: rgba(255,255,255,.06);
+      padding: 11px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+      text-decoration: none;
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .btn:hover, .btn.active { transform: translateY(-1px); background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.32); }
+    .btn.inferno.active { box-shadow: inset 0 0 0 1px rgba(255,92,69,.55); }
+    .btn.purgatorio.active { box-shadow: inset 0 0 0 1px rgba(243,182,76,.55); }
+    .btn.paradiso.active { box-shadow: inset 0 0 0 1px rgba(119,215,255,.55); }
+    .stats { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; padding: 16px; }
+    .stat { padding: 18px; border-radius: 22px; background: rgba(255,255,255,.055); border: 1px solid var(--line); min-height: 126px; }
+    .num { font-size: clamp(2.2rem, 5vw, 4rem); line-height: .95; font-weight: 900; letter-spacing: -.06em; }
+    .label { color: var(--muted); margin-top: 8px; }
+    .section { padding: 26px 0; }
+    .split { display: grid; grid-template-columns: .92fr 1.08fr; gap: 18px; align-items: start; }
+    .panel { padding: 24px; }
+    .map-card { position: sticky; top: 14px; overflow: hidden; }
+    .map-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .pill { border: 1px solid var(--line); background: rgba(255,255,255,.05); color: var(--muted); padding: 7px 10px; border-radius: 999px; font-size: .9rem; }
+    .cosmos { width: 100%; aspect-ratio: 1; display: grid; place-items: center; position: relative; margin: 6px auto 14px; }
+    .ring { position: absolute; border: 1px solid rgba(255,255,255,.18); border-radius: 50%; display: grid; place-items: center; transition: .25s ease; }
+    .ring:hover { border-color: rgba(255,255,255,.48); transform: scale(1.01); }
+    .center-orb { width: 20%; height: 20%; border-radius: 50%; background: radial-gradient(circle, #f7efe0, #caa46a 58%, transparent 62%); box-shadow: 0 0 42px rgba(202,164,106,.35); display: grid; place-items: center; color: #1a1210; font-weight: 900; }
+    .legend { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+    .legend span { display: flex; gap: 8px; align-items: center; color: var(--muted); font-size: .92rem; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .dot.i { background: var(--inferno); } .dot.p { background: var(--purgatorio); } .dot.r { background: var(--paradiso); }
+    .tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+    .list { display: grid; gap: 10px; }
+    .node {
+      width: 100%; text-align: left; cursor: pointer;
+      color: var(--text); border: 1px solid var(--line); border-radius: 18px;
+      padding: 14px 14px; background: rgba(255,255,255,.045);
+      display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+    }
+    .node:hover, .node.active { transform: translateX(3px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.28); }
+    .badge { width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; font-weight: 900; background: rgba(255,255,255,.08); }
+    .node.inferno .badge { color: var(--inferno); } .node.purgatorio .badge { color: var(--purgatorio); } .node.paradiso .badge { color: var(--paradiso); }
+    .small { color: var(--muted); font-size: .93rem; }
+    .detail { min-height: 420px; }
+    .detail-top { display: flex; justify-content: space-between; gap: 14px; align-items: start; margin-bottom: 14px; }
+    .detail h2 { margin-bottom: 6px; }
+    .detail-accent { height: 6px; border-radius: 999px; background: linear-gradient(90deg, var(--inferno), var(--purgatorio), var(--paradiso)); margin: 16px 0 18px; }
+    .kv { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin-top: 16px; }
+    .mini { padding: 15px; border: 1px solid var(--line); border-radius: 18px; background: rgba(0,0,0,.16); }
+    .mini b { display: block; margin-bottom: 6px; color: var(--accent); }
+    .path { display: grid; gap: 12px; }
+    .step { display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: start; }
+    .step .mark { width: 44px; height: 44px; border-radius: 16px; display: grid; place-items: center; background: rgba(255,255,255,.07); border: 1px solid var(--line); font-weight: 900; }
+    .step .body { padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+    .columns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .theme { padding: 18px; border-radius: 22px; border: 1px solid var(--line); background: rgba(255,255,255,.045); }
+    .theme strong { display: block; font-size: 1.08rem; margin-bottom: 8px; }
+    .meter { height: 9px; background: rgba(255,255,255,.08); border-radius: 999px; overflow: hidden; margin-top: 12px; }
+    .fill { height: 100%; width: var(--w); background: linear-gradient(90deg, var(--inferno), var(--purgatorio), var(--paradiso)); border-radius: 999px; }
+    .searchbox { display: flex; gap: 10px; margin: 14px 0; }
+    input { width: 100%; border: 1px solid var(--line); border-radius: 16px; padding: 13px 14px; background: rgba(255,255,255,.06); color: var(--text); outline: none; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .chip { border: 1px solid var(--line); border-radius: 999px; padding: 6px 9px; color: var(--muted); font-size: .88rem; }
+    .footer { color: var(--muted); padding: 30px 0 54px; }
+    .fade { animation: fade .22s ease both; }
+    @keyframes fade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+    @media (max-width: 900px) {
+      .hero-grid, .split, .columns { grid-template-columns: 1fr; }
+      .map-card { position: static; }
+      .stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 560px) {
+      .wrap { width: min(100% - 20px, 1180px); }
+      .hero { padding-top: 28px; }
+      .hero-copy, .panel { padding: 18px; border-radius: 22px; }
+      .stats, .kv, .legend { grid-template-columns: 1fr; }
+      .node { grid-template-columns: auto 1fr; }
+      .node .small:last-child { grid-column: 2; }
+    }
   </style>
 </head>
 <body>
+  <header class='hero'>
+    <div class='wrap hero-grid'>
+      <section class='card hero-copy'>
+        <div class='eyebrow'>Dante Alighieri · 1300 · путь души</div>
+        <h1>Божественная комедия</h1>
+        <p class='lead'>Интерактивная карта поэмы: спуск через воронку Ада, восхождение на гору Чистилища и подъём через небеса Рая. Нажимай на уровни, чтобы увидеть смысл, персонажей и внутреннюю логику каждой части.</p>
+        <div class='hero-actions'>
+          <a class='btn' href='#map'>Открыть карту</a>
+          <a class='btn' href='#route'>Маршрут героя</a>
+          <a class='btn' href='#keys'>Ключи к чтению</a>
+        </div>
+      </section>
+      <aside class='card stats' aria-label='Ключевые числа поэмы'>
+        <div class='stat'><div class='num'>3</div><div class='label'>части: Ад, Чистилище, Рай</div></div>
+        <div class='stat'><div class='num'>100</div><div class='label'>песен: 1 вступительная + 33×3</div></div>
+        <div class='stat'><div class='num'>9</div><div class='label'>кругов Ада и небес Рая</div></div>
+        <div class='stat'><div class='num'>7</div><div class='label'>ступеней Чистилища: очищение искажённой любви</div></div>
+      </aside>
+    </div>
+  </header>
+
   <main>
-    <h1>GitHub Pages работает 🎉</h1>
-    <p>Это тестовая страница из публичного репозитория <strong>vi34/GPT-Pages</strong>.</p>
-    <p class="muted">Создано через ChatGPT 27 июня 2026.</p>
-    <p class="muted">Ожидаемый адрес: <code>https://vi34.github.io/GPT-Pages/</code></p>
+    <section id='map' class='section'>
+      <div class='wrap split'>
+        <aside class='card panel map-card'>
+          <div class='map-head'>
+            <h2>Космография</h2>
+            <span id='modePill' class='pill'>Ад</span>
+          </div>
+          <div class='cosmos' aria-hidden='true'>
+            <div class='ring' style='width:94%;height:94%;border-color:rgba(119,215,255,.36)'></div>
+            <div class='ring' style='width:82%;height:82%;border-color:rgba(119,215,255,.30)'></div>
+            <div class='ring' style='width:70%;height:70%;border-color:rgba(119,215,255,.25)'></div>
+            <div class='ring' style='width:58%;height:58%;border-color:rgba(243,182,76,.30)'></div>
+            <div class='ring' style='width:46%;height:46%;border-color:rgba(243,182,76,.38)'></div>
+            <div class='ring' style='width:34%;height:34%;border-color:rgba(255,92,69,.36)'></div>
+            <div class='ring' style='width:24%;height:24%;border-color:rgba(255,92,69,.48)'></div>
+            <div class='center-orb'>D</div>
+          </div>
+          <div class='legend'>
+            <span><i class='dot i'></i>падение</span>
+            <span><i class='dot p'></i>очищение</span>
+            <span><i class='dot r'></i>созерцание</span>
+          </div>
+          <div class='searchbox'>
+            <input id='search' type='search' placeholder='Поиск: Вергилий, Беатриче, гордыня, Лимб…'>
+          </div>
+          <p class='small'>Подсказка: можно искать по персонажам, темам и названиям уровней.</p>
+        </aside>
+
+        <section class='card panel'>
+          <div class='tabs' role='tablist' aria-label='Части Божественной комедии'>
+            <button class='btn inferno active' data-part='inferno'>🔥 Ад</button>
+            <button class='btn purgatorio' data-part='purgatorio'>⛰️ Чистилище</button>
+            <button class='btn paradiso' data-part='paradiso'>✨ Рай</button>
+          </div>
+          <div id='list' class='list'></div>
+        </section>
+      </div>
+    </section>
+
+    <section class='section'>
+      <div class='wrap'>
+        <article id='detail' class='card panel detail'></article>
+      </div>
+    </section>
+
+    <section id='route' class='section'>
+      <div class='wrap split'>
+        <article class='card panel'>
+          <h2>Маршрут: от потери пути к видению</h2>
+          <p class='lead'>Поэма устроена не как экскурсия по загробному миру, а как драматическая переориентация человека: от страха и хаоса к свободе, любви и интеллектуальному свету.</p>
+        </article>
+        <article class='card panel path'>
+          <div class='step'><div class='mark'>1</div><div class='body'><h3>Тёмный лес</h3><p class='small'>Герой теряет прямой путь: стартовая точка — моральная и духовная дезориентация.</p></div></div>
+          <div class='step'><div class='mark'>2</div><div class='body'><h3>Вергилий</h3><p class='small'>Разум, поэзия и античная мудрость ведут Данте через Ад и почти всё Чистилище.</p></div></div>
+          <div class='step'><div class='mark'>3</div><div class='body'><h3>Чистилище</h3><p class='small'>На горе душа уже не заперта в своей ошибке: она учится желать правильно.</p></div></div>
+          <div class='step'><div class='mark'>4</div><div class='body'><h3>Беатриче</h3><p class='small'>В Раю разуму требуется помощь благодати, любви и созерцания.</p></div></div>
+          <div class='step'><div class='mark'>5</div><div class='body'><h3>Эмпирей</h3><p class='small'>Финал — не географическая точка, а предельный опыт порядка, любви и смысла.</p></div></div>
+        </article>
+      </div>
+    </section>
+
+    <section id='keys' class='section'>
+      <div class='wrap'>
+        <div class='card panel'>
+          <h2>Ключи к чтению</h2>
+          <div class='columns'>
+            <div class='theme'><strong>Архитектура числа 3</strong><p class='small'>Три части, терцины, три проводника в широком смысле: разум, откровение, созерцание. Форма подражает идее порядка.</p><div class='meter'><div class='fill' style='--w:92%'></div></div></div>
+            <div class='theme'><strong>Контрапассо</strong><p class='small'>В Аду наказание показывает внутреннюю логику выбора: душа оказывается внутри того, что сделала своим центром.</p><div class='meter'><div class='fill' style='--w:78%'></div></div></div>
+            <div class='theme'><strong>Любовь как двигатель</strong><p class='small'>Для Данте проблема не в том, что человек любит, а в том, что любовь может быть направлена не туда, слаба или чрезмерна.</p><div class='meter'><div class='fill' style='--w:98%'></div></div></div>
+          </div>
+          <div class='chips'>
+            <span class='chip'>политика Флоренции</span>
+            <span class='chip'>античность и христианство</span>
+            <span class='chip'>астрономия Средневековья</span>
+            <span class='chip'>аллегория</span>
+            <span class='chip'>путь взросления</span>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
+
+  <footer class='footer'>
+    <div class='wrap'>
+      Инфографика создана как учебный интерактивный конспект. Текст поэмы здесь пересказан, а не цитируется: можно свободно дорабатывать сайт в репозитории GPT-Pages.
+    </div>
+  </footer>
+
+  <script>
+    const data = {
+      inferno: {
+        name: 'Ад', icon: '🔥', color: 'var(--inferno)', idea: 'Мир застывшего выбора: чем ниже, тем сознательнее и холоднее зло.',
+        levels: [
+          {n:'0', title:'Преддверие', sub:'нерешительность и духовная пустота', figures:'безымянные души, Харон', theme:'отказ от выбора', logic:'Данте начинает с людей, которые не стали ни добрыми, ни злыми: их жизнь прошла мимо смысла.', lesson:'Нейтральность в главных вопросах тоже становится выбором.'},
+          {n:'1', title:'Лимб', sub:'добродетель без христианской надежды', figures:'Гомер, Гораций, Овидий, Саладин', theme:'границы разума', logic:'Здесь благородные нехристиане не мучимы в грубом смысле, но лишены полноты надежды.', lesson:'Античная мудрость велика, но для Данте она не завершает путь.'},
+          {n:'2', title:'Похоть', sub:'любовь, ставшая бурей', figures:'Франческа да Римини, Паоло', theme:'страсть и самооправдание', logic:'Желание изображено как сила, которая несёт человека, если он отдаёт ей управление.', lesson:'Данте сочувствует, но показывает опасность красивого самообмана.'},
+          {n:'3', title:'Чревоугодие', sub:'жизнь, сведённая к потреблению', figures:'Цербер, Чакко', theme:'неумеренность', logic:'Человек, живущий только насыщением, теряет вертикаль и становится тяжёлым.', lesson:'Проблема не в теле, а в сужении личности до аппетита.'},
+          {n:'4', title:'Алчность и расточительность', sub:'искажённое отношение к вещам', figures:'Плутос', theme:'богатство как идол', logic:'Две крайности выглядят противоположными, но обе подчиняют душу деньгам и статусу.', lesson:'Вещи должны служить жизни, а не становиться её центром.'},
+          {n:'5', title:'Гнев и унылая злоба', sub:'эмоции, ставшие средой обитания', figures:'Флегий', theme:'ярость и пассивная обида', logic:'Открытый гнев и скрытая мрачность оказываются рядом: оба способа запирают человека в себе.', lesson:'Не всякая злость плоха, но застревание в ней разрушает свободу.'},
+          {n:'6', title:'Ересь', sub:'разум, закрывшийся от вечности', figures:'Фарината, Кавальканте', theme:'гордая уверенность', logic:'Данте связывает ошибку не только с идеями, но и с упорной самодостаточностью.', lesson:'Интеллект без смирения легко превращается в стену.'},
+          {n:'7', title:'Насилие', sub:'против ближнего, себя и порядка мира', figures:'Минотавр, кентавры', theme:'разрушительная сила', logic:'Насилие у Данте делится по направленности: оно ломает связь человека с людьми, с собой и с высшим порядком.', lesson:'Чем больше силы, тем важнее вопрос, чему она служит.'},
+          {n:'8', title:'Обман', sub:'Малебольдже: зло интеллекта', figures:'Улисс, лукавые советники, лицемеры', theme:'ум без совести', logic:'Обман глубже насилия, потому что использует человеческий дар речи и разума против доверия.', lesson:'Самые опасные ошибки могут выглядеть умно и убедительно.'},
+          {n:'9', title:'Предательство', sub:'ледяной центр Ада', figures:'Каин, Иуда, Брут, Кассий, Люцифер', theme:'измена любви и доверия', logic:'Внизу не огонь, а холод: полное отсутствие живой любви и движения.', lesson:'Для Данте худшее зло — не страсть, а холодная измена связи.'}
+        ]
+      },
+      purgatorio: {
+        name: 'Чистилище', icon: '⛰️', color: 'var(--purgatorio)', idea: 'Мир надежды: душа страдает не бессмысленно, а учится заново любить.',
+        levels: [
+          {n:'A', title:'Предчистилище', sub:'порог перемены', figures:'Катон, Манфред, запоздало раскаявшиеся', theme:'начало надежды', logic:'Здесь находятся те, кто повернулся к добру поздно: путь начат, но требует времени.', lesson:'Даже поздний поворот важен, если он настоящий.'},
+          {n:'1', title:'Гордыня', sub:'тяжесть раздутого Я', figures:'Одеризи, Омберто', theme:'смирение', logic:'Первой очищается любовь к собственному превосходству: она искривляет взгляд на всех остальных.', lesson:'Свобода начинается с правды о собственной мере.'},
+          {n:'2', title:'Зависть', sub:'боль от чужого блага', figures:'Сапия', theme:'радость за другого', logic:'Зависть делает благо ближнего угрозой, хотя в мире Данте добро не уменьшается от разделения.', lesson:'Чужой успех не обязан быть обвинением против тебя.'},
+          {n:'3', title:'Гнев', sub:'любовь к справедливости без света', figures:'Марко Ломбардо', theme:'очищение желания наказать', logic:'Гнев может начинаться с чувства правды, но легко превращает человека в пленника реакции.', lesson:'Справедливость требует ясности, а не только жара.'},
+          {n:'4', title:'Лень', sub:'слабая любовь к добру', figures:'аббат Сан-Дзено', theme:'энергия движения', logic:'Здесь проблема не в чрезмерности, а в недостатке силы: добро известно, но не выбрано делом.', lesson:'Любовь проверяется не настроением, а движением.'},
+          {n:'5', title:'Алчность', sub:'взгляд, прикованный к земле', figures:'папа Адриан V, Стаций', theme:'освобождение от обладания', logic:'Желание иметь может стать настолько плотным, что человек перестаёт видеть небо.', lesson:'Иметь можно многое, но нельзя позволить вещам иметь тебя.'},
+          {n:'6', title:'Чревоугодие', sub:'желание меры', figures:'Форезе Донати', theme:'восстановление вкуса', logic:'Очищается не тело как таковое, а власть потребления над волей.', lesson:'Мера возвращает радость, а не уничтожает её.'},
+          {n:'7', title:'Похоть', sub:'огонь желания', figures:'Гвидо Гвиницелли, Арнаут Даниэль', theme:'любовь и целомудрие', logic:'Желание не уничтожается, а просветляется: любовь должна стать свободной, а не захватывающей.', lesson:'Данте мыслит очищение как преобразование, а не простое подавление.'},
+          {n:'E', title:'Земной рай', sub:'память, раскаяние, встреча с Беатриче', figures:'Матильда, Беатриче', theme:'переход к созерцанию', logic:'Вергилий исчезает: естественный разум довёл героя до предела, дальше начинается другой уровень зрения.', lesson:'Иногда лучший проводник должен уйти, чтобы путь продолжился.'}
+        ]
+      },
+      paradiso: {
+        name: 'Рай', icon: '✨', color: 'var(--paradiso)', idea: 'Мир света: разные степени блаженства не конкурируют, потому что каждая душа согласна с целым.',
+        levels: [
+          {n:'1', title:'Луна', sub:'неустойчивые обеты', figures:'Пиккарда Донати', theme:'верность', logic:'Нижнее небо показывает слабость постоянства: добро было желанно, но не удержано до конца.', lesson:'Свобода требует устойчивости, а не только искреннего порыва.'},
+          {n:'2', title:'Меркурий', sub:'добрые дела ради славы', figures:'Юстиниан', theme:'мотивы поступка', logic:'Здесь действие было великим, но примесь честолюбия уменьшала прозрачность любви.', lesson:'Даже добро меняет смысл в зависимости от мотива.'},
+          {n:'3', title:'Венера', sub:'любовь, очищенная от обладания', figures:'Карл Мартелл, Куницца', theme:'эрос и милость', logic:'Данте не отрицает любовь, а показывает её место в большем порядке.', lesson:'Человеческая любовь может быть ступенью, если не замыкается на себе.'},
+          {n:'4', title:'Солнце', sub:'мудрость и богословие', figures:'Фома Аквинский, Бонавентура', theme:'интеллект как свет', logic:'Солнце собирает мудрецов: знание здесь не холодное, а радостно вращается вокруг истины.', lesson:'Мысль становится светом, когда соединена с любовью.'},
+          {n:'5', title:'Марс', sub:'мужество и свидетельство', figures:'Каччагвида', theme:'память рода и миссия', logic:'Данте узнаёт о своём изгнании и получает задачу говорить правду, даже если она тяжела.', lesson:'Личная боль может стать частью призвания.'},
+          {n:'6', title:'Юпитер', sub:'справедливость правителей', figures:'Давид, Траян, Рифей', theme:'закон и милость', logic:'Образ орла показывает политический идеал: власть должна быть прозрачна справедливости.', lesson:'Правосудие выше партийной выгоды и личной славы.'},
+          {n:'7', title:'Сатурн', sub:'созерцание', figures:'Пётр Дамиани, Бенедикт', theme:'тишина и высота', logic:'Чем выше путь, тем меньше обычной риторики: созерцание требует внутренней тишины.', lesson:'Не всякое знание достигается спором; иногда нужна собранность.'},
+          {n:'8', title:'Звёздное небо', sub:'вера, надежда и любовь', figures:'апостолы Пётр, Иаков, Иоанн', theme:'экзамен души', logic:'Данте проходит проверку главных добродетелей и оглядывается на весь путь снизу вверх.', lesson:'Понимание должно стать личной позицией, а не только увиденной картиной.'},
+          {n:'9', title:'Перводвигатель', sub:'ангельский порядок', figures:'ангельские чины', theme:'движение от любви', logic:'Самое быстрое небо ближе всего к источнику движения: космос держится не механикой, а любовью.', lesson:'В финальной оптике Данте порядок мира — это порядок желания.'},
+          {n:'∞', title:'Эмпирей', sub:'белая роза и финальное видение', figures:'Бернар Клервоский, Мария, Беатриче', theme:'созерцание Бога', logic:'Пространственная карта заканчивается: герой видит не место, а полноту смысла, где любовь и разум совпадают.', lesson:'Финал поэмы — не ответ в виде схемы, а преображение взгляда.'}
+        ]
+      }
+    };
+
+    const list = document.querySelector('#list');
+    const detail = document.querySelector('#detail');
+    const buttons = [...document.querySelectorAll('[data-part]')];
+    const modePill = document.querySelector('#modePill');
+    const search = document.querySelector('#search');
+    let currentPart = 'inferno';
+    let currentIndex = 0;
+
+    function allLevels() {
+      return Object.entries(data).flatMap(([part, obj]) => obj.levels.map((level, idx) => ({part, idx, ...level, partName: obj.name, icon: obj.icon})));
+    }
+
+    function renderList() {
+      const query = search.value.trim().toLowerCase();
+      const source = query ? allLevels() : data[currentPart].levels.map((x, idx) => ({...x, part: currentPart, idx, partName: data[currentPart].name, icon: data[currentPart].icon}));
+      const filtered = source.filter(item => !query || [item.title, item.sub, item.figures, item.theme, item.logic, item.lesson, item.partName].join(' ').toLowerCase().includes(query));
+      list.innerHTML = filtered.map(item => `
+        <button class='node ${item.part} ${item.part === currentPart && item.idx === currentIndex ? 'active' : ''}' data-open='${item.part}:${item.idx}'>
+          <span class='badge'>${item.n}</span>
+          <span><strong>${item.icon} ${item.title}</strong><br><span class='small'>${item.sub}</span></span>
+          <span class='small'>${item.partName}</span>
+        </button>
+      `).join('') || `<div class='mini'>Ничего не найдено. Попробуй: Беатриче, Улисс, гордыня, свет, обман.</div>`;
+      document.querySelectorAll('[data-open]').forEach(btn => btn.addEventListener('click', () => {
+        const [part, idx] = btn.dataset.open.split(':');
+        currentPart = part; currentIndex = Number(idx); search.value = '';
+        syncTabs(); renderList(); renderDetail();
+        detail.scrollIntoView({behavior:'smooth', block:'start'});
+      }));
+    }
+
+    function renderDetail() {
+      const part = data[currentPart];
+      const item = part.levels[currentIndex];
+      modePill.textContent = part.name;
+      detail.className = 'card panel detail fade';
+      detail.innerHTML = `
+        <div class='detail-top'>
+          <div>
+            <div class='eyebrow'>${part.icon} ${part.name} · уровень ${item.n}</div>
+            <h2>${item.title}</h2>
+            <p class='lead'>${item.sub}</p>
+          </div>
+          <span class='pill' style='color:${part.color}'>${item.theme}</span>
+        </div>
+        <div class='detail-accent'></div>
+        <p>${part.idea}</p>
+        <div class='kv'>
+          <div class='mini'><b>Кого встречаем</b><p>${item.figures}</p></div>
+          <div class='mini'><b>Как это устроено</b><p>${item.logic}</p></div>
+          <div class='mini'><b>Философская тема</b><p>${item.theme}</p></div>
+          <div class='mini'><b>Что вынести</b><p>${item.lesson}</p></div>
+        </div>
+      `;
+      window.setTimeout(() => detail.classList.remove('fade'), 260);
+    }
+
+    function syncTabs() {
+      buttons.forEach(btn => btn.classList.toggle('active', btn.dataset.part === currentPart));
+    }
+
+    buttons.forEach(btn => btn.addEventListener('click', () => {
+      currentPart = btn.dataset.part; currentIndex = 0; search.value = '';
+      syncTabs(); renderList(); renderDetail();
+    }));
+    search.addEventListener('input', renderList);
+    renderList();
+    renderDetail();
+  </script>
 </body>
 </html>
