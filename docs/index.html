@@ -3,519 +3,405 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Божественная комедия Данте — интерактивная инфографика</title>
+  <title>Маршрут Данте по Аду — интерактивная инфографика</title>
   <style>
     :root {
       color-scheme: dark;
-      --bg: #0f0d13;
-      --card: rgba(255,255,255,.065);
-      --card2: rgba(255,255,255,.04);
-      --text: #f7efe2;
-      --muted: #b9ad9d;
-      --line: rgba(247,239,226,.16);
-      --gold: #d2ad6f;
-      --inferno: #ff6248;
-      --purgatorio: #f2ba59;
-      --paradiso: #7bdcff;
-      --green: #9fe8ae;
-      --shadow: 0 22px 80px rgba(0,0,0,.34);
+      --bg: #09080d;
+      --text: #fff3df;
+      --muted: #c5b7a4;
+      --dim: rgba(255,243,223,.72);
+      --line: rgba(255,243,223,.16);
+      --panel: rgba(16,13,18,.66);
+      --panel2: rgba(255,255,255,.065);
+      --gold: #d9ad6a;
+      --red: #ff6248;
+      --orange: #f0a04b;
+      --blue: #7bdcff;
+      --ice: #c8f3ff;
+      --shadow: 0 26px 90px rgba(0,0,0,.45);
     }
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; scroll-snap-type: y proximity; }
     body {
       margin: 0;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
-      background:
-        radial-gradient(circle at 10% 8%, rgba(255,98,72,.20), transparent 30%),
-        radial-gradient(circle at 82% 20%, rgba(123,220,255,.18), transparent 30%),
-        radial-gradient(circle at 45% 86%, rgba(242,186,89,.17), transparent 35%),
-        var(--bg);
+      background: var(--bg);
       line-height: 1.55;
+      overflow-x: hidden;
     }
-    a { color: inherit; }
-    button, input { font: inherit; }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 20% 12%, rgba(255,98,72,.20), transparent 30%),
+        radial-gradient(circle at 78% 28%, rgba(123,220,255,.12), transparent 28%),
+        linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.62));
+      z-index: -5;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
     .wrap { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
-    .hero { padding: 54px 0 28px; }
-    .hero-grid { display: grid; grid-template-columns: 1.08fr .92fr; gap: 24px; align-items: stretch; }
-    .card {
-      border: 1px solid var(--line);
-      border-radius: 28px;
-      background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.035));
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(14px);
+    .hero {
+      min-height: 100svh;
+      scroll-snap-align: start;
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 72px 0 42px;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(255,199,116,.16), transparent 30%),
+        linear-gradient(180deg, rgba(17,12,16,.55), rgba(7,6,10,.85));
     }
-    .hero-copy { padding: 34px; }
-    .eyebrow { color: var(--gold); font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
-    h1 { margin: 14px 0 20px; font-size: clamp(2.4rem, 7vw, 6.5rem); line-height: .9; letter-spacing: -.065em; }
-    h2 { margin: 0 0 14px; font-size: clamp(1.65rem, 4vw, 3.1rem); line-height: 1.04; letter-spacing: -.04em; }
-    h3 { margin: 0 0 8px; font-size: 1.18rem; }
+    .hero-art { position: absolute; inset: 0; opacity: .75; filter: saturate(1.08); }
+    .hero-art svg { width: 100%; height: 100%; display: block; object-fit: cover; }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(0,0,0,.74), rgba(0,0,0,.22) 55%, rgba(0,0,0,.74));
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; z-index: 1; display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; align-items: end; }
+    .glass {
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.035));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+    .hero-copy { padding: clamp(24px, 5vw, 42px); }
+    .eyebrow { color: var(--gold); text-transform: uppercase; letter-spacing: .12em; font-weight: 850; font-size: .78rem; }
+    h1 { margin: 16px 0 20px; font-size: clamp(3rem, 9vw, 7.8rem); line-height: .86; letter-spacing: -.075em; }
+    h2 { margin: 0 0 12px; font-size: clamp(2rem, 5vw, 4.3rem); line-height: .92; letter-spacing: -.055em; }
+    h3 { margin: 0 0 8px; font-size: 1.2rem; }
     p { margin: 0; }
-    .lead { color: var(--muted); font-size: clamp(1rem, 2vw, 1.2rem); max-width: 66ch; }
+    .lead { color: var(--muted); font-size: clamp(1.04rem, 2vw, 1.26rem); max-width: 68ch; }
+    .hero-card { padding: 24px; align-self: stretch; display: grid; gap: 14px; }
+    .mini-stat { padding: 16px; border: 1px solid var(--line); border-radius: 22px; background: rgba(0,0,0,.22); }
+    .mini-stat strong { display: block; color: var(--gold); font-size: 1.6rem; line-height: 1; margin-bottom: 8px; }
     .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
     .btn {
-      display: inline-flex; align-items: center; gap: 8px;
       border: 1px solid var(--line);
       border-radius: 999px;
-      padding: 10px 14px;
-      background: rgba(255,255,255,.06);
+      padding: 11px 15px;
+      background: rgba(255,255,255,.08);
       color: var(--text);
-      text-decoration: none;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       transition: transform .16s ease, background .16s ease, border-color .16s ease;
     }
-    .btn:hover, .btn.active { transform: translateY(-1px); background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.34); }
-    .btn.inferno.active { box-shadow: inset 0 0 0 1px rgba(255,98,72,.55); }
-    .btn.purgatorio.active { box-shadow: inset 0 0 0 1px rgba(242,186,89,.55); }
-    .btn.paradiso.active { box-shadow: inset 0 0 0 1px rgba(123,220,255,.55); }
-    .stats { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; padding: 16px; }
-    .stat { min-height: 126px; padding: 18px; border: 1px solid var(--line); border-radius: 22px; background: var(--card2); }
-    .num { font-size: clamp(2.2rem, 5vw, 4rem); line-height: .95; font-weight: 900; letter-spacing: -.06em; }
-    .label, .small, .caption { color: var(--muted); }
-    .section { padding: 26px 0; }
-    .split { display: grid; grid-template-columns: .92fr 1.08fr; gap: 18px; align-items: start; }
-    .panel { padding: 24px; }
-    .map-card { position: sticky; top: 14px; overflow: hidden; }
-    .map-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-    .pill { border: 1px solid var(--line); background: rgba(255,255,255,.055); color: var(--muted); border-radius: 999px; padding: 7px 10px; font-size: .9rem; white-space: nowrap; }
-    .stage {
-      display: grid; place-items: center;
-      min-height: 320px;
-      margin: 14px 0;
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      overflow: hidden;
-      background: radial-gradient(circle at 50% 28%, rgba(255,255,255,.11), transparent 55%), rgba(0,0,0,.18);
+    .btn:hover { transform: translateY(-1px); background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.32); }
+    .progress-wrap {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 4px;
+      background: rgba(255,255,255,.08);
+      z-index: 50;
     }
-    .stage svg { width: min(100%, 430px); height: auto; display: block; }
-    .legend { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 12px; }
-    .legend span { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: .92rem; }
-    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-    .dot.i { background: var(--inferno); }
-    .dot.p { background: var(--purgatorio); }
-    .dot.r { background: var(--paradiso); }
-    .tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
-    .list { display: grid; gap: 10px; }
-    .node {
-      width: 100%;
-      display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px;
-      padding: 14px;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: rgba(255,255,255,.045);
-      color: var(--text);
-      text-align: left;
+    .progress { height: 100%; width: 0%; background: linear-gradient(90deg, var(--red), var(--orange), var(--ice)); box-shadow: 0 0 24px rgba(255,98,72,.55); }
+    .rail {
+      position: fixed;
+      z-index: 30;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: grid;
+      gap: 8px;
+      max-height: 78vh;
+      overflow: auto;
+      scrollbar-width: none;
+    }
+    .rail::-webkit-scrollbar { display: none; }
+    .rail button {
+      width: 12px;
+      height: 12px;
+      border: 1px solid rgba(255,243,223,.44);
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      padding: 0;
       cursor: pointer;
-      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      position: relative;
+      transition: transform .16s ease, background .16s ease, border-color .16s ease;
     }
-    .node:hover, .node.active { transform: translateX(3px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.28); }
-    .badge { width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; background: rgba(255,255,255,.08); font-weight: 900; }
-    .node.inferno .badge { color: var(--inferno); }
-    .node.purgatorio .badge { color: var(--purgatorio); }
-    .node.paradiso .badge { color: var(--paradiso); }
-    .searchbox { margin: 14px 0; }
-    input { width: 100%; padding: 13px 14px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.06); color: var(--text); outline: none; }
-    .detail { min-height: 400px; }
-    .detail-top { display: flex; justify-content: space-between; align-items: start; gap: 14px; }
-    .detail h2 { margin-bottom: 6px; }
-    .detail-accent { height: 6px; border-radius: 999px; margin: 16px 0 18px; background: linear-gradient(90deg, var(--inferno), var(--purgatorio), var(--paradiso)); }
-    .kv { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin-top: 16px; }
-    .mini, .fact-card, .figure-card, .theme {
+    .rail button.active { background: var(--gold); border-color: var(--gold); transform: scale(1.35); }
+    .rail button span {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
       border: 1px solid var(--line);
-      border-radius: 20px;
-      background: rgba(255,255,255,.045);
-      padding: 16px;
+      border-radius: 999px;
+      background: rgba(8,7,10,.82);
+      padding: 6px 10px;
+      color: var(--dim);
+      font-size: .82rem;
     }
-    .mini b, .fact-card strong, .theme strong { display: block; margin-bottom: 7px; color: var(--gold); }
-    .part-facts { display: grid; gap: 10px; margin-top: 16px; }
-    .factline { display: grid; grid-template-columns: 32px 1fr; gap: 10px; align-items: start; padding: 12px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.04); }
-    .spark { width: 32px; height: 32px; border-radius: 11px; display: grid; place-items: center; background: rgba(255,255,255,.075); font-weight: 800; }
-    .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; }
-    .figure-card .stage { min-height: 240px; margin: 10px 0; }
-    .facts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px; }
-    .columns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px; }
-    .path { display: grid; gap: 12px; }
-    .step { display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: start; }
-    .mark { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.07); font-weight: 900; }
-    .body { padding-bottom: 14px; border-bottom: 1px solid var(--line); }
-    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-    .chip { border: 1px solid var(--line); border-radius: 999px; padding: 6px 9px; color: var(--muted); font-size: .88rem; }
-    .footer { color: var(--muted); padding: 30px 0 54px; }
-    .fade { animation: fade .22s ease both; }
-    @keyframes fade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
-    @media (max-width: 1000px) {
-      .hero-grid, .split, .gallery, .columns { grid-template-columns: 1fr; }
-      .map-card { position: static; }
-      .facts-grid, .stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .rail button:hover span, .rail button.active span { opacity: 1; }
+    .location {
+      min-height: 100svh;
+      scroll-snap-align: start;
+      position: relative;
+      display: grid;
+      align-items: center;
+      overflow: hidden;
+      padding: 88px 0;
+      isolation: isolate;
+    }
+    .location .bg {
+      position: absolute;
+      inset: 0;
+      z-index: -3;
+      opacity: .9;
+      transform: scale(1.02);
+    }
+    .location .bg svg { width: 100%; height: 100%; display: block; object-fit: cover; }
+    .location::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(circle at var(--glow-x, 50%) var(--glow-y, 45%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 35%),
+        linear-gradient(90deg, rgba(5,4,7,.84), rgba(5,4,7,.45) 52%, rgba(5,4,7,.82));
+    }
+    .location::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, transparent, #000 20%, #000 80%, transparent);
+      opacity: .45;
+    }
+    .scene-grid { display: grid; grid-template-columns: .86fr 1.14fr; gap: 24px; align-items: center; }
+    .scene-index {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--gold);
+      font-weight: 850;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-size: .8rem;
+    }
+    .scene-index::before { content: ""; width: 28px; height: 1px; background: currentColor; opacity: .8; }
+    .scene-panel { padding: clamp(22px, 4vw, 36px); }
+    .idea {
+      margin-top: 18px;
+      padding: 18px;
+      border-left: 4px solid var(--accent);
+      border-radius: 18px;
+      background: rgba(0,0,0,.24);
+      color: var(--text);
+      font-size: clamp(1.1rem, 2.1vw, 1.45rem);
+      line-height: 1.35;
+    }
+    .scene-copy { color: var(--muted); margin-top: 16px; font-size: clamp(1rem, 1.5vw, 1.1rem); }
+    .facts { display: grid; gap: 12px; }
+    .fact {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(0,0,0,.30);
+      padding: 16px;
+      backdrop-filter: blur(12px);
+    }
+    .fact b { color: var(--gold); display: block; margin-bottom: 6px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+    .tag { border: 1px solid var(--line); border-radius: 999px; padding: 6px 10px; color: var(--dim); background: rgba(255,255,255,.055); font-size: .9rem; }
+    .next-note { margin-top: 18px; color: var(--dim); font-size: .94rem; }
+    .outro {
+      min-height: 70svh;
+      scroll-snap-align: start;
+      display: grid;
+      place-items: center;
+      padding: 74px 0;
+      background:
+        radial-gradient(circle at 50% 15%, rgba(200,243,255,.16), transparent 32%),
+        linear-gradient(180deg, #09080d, #12101a);
+    }
+    .outro .glass { padding: clamp(24px, 5vw, 42px); }
+    .outro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 22px; }
+    .todo { border: 1px dashed rgba(255,243,223,.25); border-radius: 22px; padding: 18px; color: var(--muted); background: rgba(255,255,255,.035); }
+    .fade-in { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .55s ease; }
+    .location.active .fade-in { opacity: 1; transform: none; }
+    @media (max-width: 960px) {
+      html { scroll-snap-type: y proximity; }
+      .hero-inner, .scene-grid, .outro-grid { grid-template-columns: 1fr; }
+      .rail { display: none; }
+      .location { padding: 70px 0; }
+      .scene-panel { background: rgba(8,7,10,.62); }
+      .facts { grid-template-columns: 1fr; }
     }
     @media (max-width: 560px) {
       .wrap { width: min(100% - 20px, 1180px); }
-      .hero { padding-top: 28px; }
-      .hero-copy, .panel { padding: 18px; border-radius: 22px; }
-      .stats, .kv, .legend, .facts-grid { grid-template-columns: 1fr; }
-      .node { grid-template-columns: auto 1fr; }
-      .node .small:last-child { grid-column: 2; }
-      .detail-top { display: block; }
-      .detail-top .pill { display: inline-flex; margin-top: 10px; }
-      .stage { min-height: 255px; }
+      .hero { padding-top: 42px; }
+      .hero-copy, .hero-card, .scene-panel, .outro .glass { border-radius: 22px; padding: 20px; }
+      .location { min-height: 106svh; }
+      .scene-copy { font-size: 1rem; }
     }
   </style>
 </head>
 <body>
-  <header class="hero">
-    <div class="wrap hero-grid">
-      <section class="card hero-copy">
-        <div class="eyebrow">Dante Alighieri · путь души · средневековый космос</div>
-        <h1>Божественная комедия</h1>
-        <p class="lead">Интерактивная инфографика по поэме Данте: Ад как воронка падения, Чистилище как гора очищения и Рай как система небесных сфер. Выбирай уровень, чтобы увидеть персонажей, смысл и ключевые факты.</p>
+  <div class="progress-wrap" aria-hidden="true"><div id="progress" class="progress"></div></div>
+  <nav id="rail" class="rail" aria-label="Навигация по локациям Ада"></nav>
+
+  <header class="hero" id="top">
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <radialGradient id="heroGlow" cx="55%" cy="28%" r="50%"><stop offset="0%" stop-color="#ffb56b" stop-opacity=".28"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient>
+          <linearGradient id="heroPit" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#311820"/><stop offset="1" stop-color="#050407"/></linearGradient>
+        </defs>
+        <rect width="1600" height="900" fill="url(#heroPit)"/>
+        <rect width="1600" height="900" fill="url(#heroGlow)"/>
+        <path d="M110 120 C300 220 420 160 620 260 C850 375 970 250 1210 350 C1370 416 1450 520 1530 710 L1530 900 L0 900 L0 520 C120 470 180 395 110 120Z" fill="#08070b" opacity=".78"/>
+        <path d="M1180 120 L1460 120 L1360 235 L1280 235 Z" fill="#ff6248" opacity=".22"/>
+        <path d="M1240 158 Q1320 192 1400 158" fill="none" stroke="#ffc08a" stroke-opacity=".35" stroke-width="3"/>
+        <g opacity=".42" stroke="#fff3df" stroke-width="2" stroke-linecap="round">
+          <path d="M240 790 L375 410 L505 790"/><path d="M355 790 L530 290 L710 790"/><path d="M580 790 L760 330 L930 790"/><path d="M865 790 L1030 380 L1190 790"/>
+        </g>
+        <g fill="#fff3df" opacity=".78">
+          <circle cx="1195" cy="102" r="2"/><circle cx="1270" cy="78" r="2"/><circle cx="1335" cy="104" r="2"/><circle cx="1398" cy="72" r="1.8"/><circle cx="1478" cy="116" r="2"/>
+        </g>
+      </svg>
+    </div>
+    <div class="wrap hero-inner">
+      <section class="glass hero-copy">
+        <div class="eyebrow">Inferno · маршрут героя · скролл-инфографика</div>
+        <h1>Данте проходит Ад</h1>
+        <p class="lead">Сейчас сайт сфокусирован на первой части «Божественной комедии». Листай вниз: каждая остановка — отдельная локация Ада, своё фоновое изображение и главная идея сцены.</p>
         <div class="actions">
-          <a class="btn" href="#map">Открыть карту</a>
-          <a class="btn" href="#worlds">Схемы миров</a>
-          <a class="btn" href="#facts">Интересные факты</a>
-          <a class="btn" href="#route">Маршрут героя</a>
+          <a class="btn" href="#loc-0">Начать путь ↓</a>
+          <a class="btn" href="#outro">Что добавим позже</a>
         </div>
       </section>
-      <aside class="card stats" aria-label="Ключевые числа поэмы">
-        <div class="stat"><div class="num">3</div><div class="label">части: Ад, Чистилище, Рай</div></div>
-        <div class="stat"><div class="num">100</div><div class="label">песен: 1 вступительная + 33×3</div></div>
-        <div class="stat"><div class="num">9</div><div class="label">кругов Ада и небес Рая</div></div>
-        <div class="stat"><div class="num">7</div><div class="label">террас Чистилища: очищение любви</div></div>
+      <aside class="glass hero-card">
+        <div class="mini-stat"><strong>14</strong><span class="lead">ключевых остановок: от тёмного леса до выхода к звёздам</span></div>
+        <div class="mini-stat"><strong>34</strong><span class="lead">песни «Ада»: путь вниз устроен как моральная диагностика</span></div>
+        <div class="mini-stat"><strong>1</strong><span class="lead">сюжетная дуга: потеря пути → спуск → разворот → возможность подъёма</span></div>
       </aside>
     </div>
   </header>
 
-  <main>
-    <section id="map" class="section">
-      <div class="wrap split">
-        <aside class="card panel map-card">
-          <div class="map-head">
-            <h2>Космография</h2>
-            <span id="modePill" class="pill">Ад</span>
-          </div>
-          <div id="visualCopy"></div>
-          <div id="visual" class="stage" aria-label="Схема выбранной части поэмы"></div>
-          <p id="visualCaption" class="caption"></p>
-          <div class="legend">
-            <span><i class="dot i"></i>падение</span>
-            <span><i class="dot p"></i>очищение</span>
-            <span><i class="dot r"></i>созерцание</span>
-          </div>
-          <div class="searchbox">
-            <input id="search" type="search" placeholder="Поиск: Вергилий, Беатриче, гордыня, Лимб…">
-          </div>
-          <p class="small">Схема слева меняется вместе с выбранной частью поэмы.</p>
-        </aside>
+  <main id="journey" aria-label="Маршрут Данте по Аду"></main>
 
-        <section class="card panel">
-          <div class="tabs" role="tablist" aria-label="Части Божественной комедии">
-            <button class="btn inferno active" data-part="inferno">🔥 Ад</button>
-            <button class="btn purgatorio" data-part="purgatorio">⛰️ Чистилище</button>
-            <button class="btn paradiso" data-part="paradiso">✨ Рай</button>
-          </div>
-          <div id="list" class="list"></div>
-        </section>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="wrap">
-        <article id="detail" class="card panel detail"></article>
-      </div>
-    </section>
-
-    <section id="worlds" class="section">
-      <div class="wrap">
-        <div class="card panel">
-          <h2>Три мира — три визуальные логики</h2>
-          <p class="lead">Данте строит не один абстрактный «загробный мир», а три разных пространства. Ад сжимается вниз, Чистилище поднимается вверх, Рай расширяется наружу через небесные сферы.</p>
-          <div id="galleryGrid" class="gallery"></div>
+  <section class="outro" id="outro">
+    <div class="wrap">
+      <div class="glass">
+        <div class="eyebrow">дальше</div>
+        <h2>Чистилище и Рай добавим отдельными маршрутами</h2>
+        <p class="lead">Логика уже подготовлена: после ада можно сделать вторую скролл-ветку как подъём по горе Чистилища, а третью — как движение через небесные сферы Рая.</p>
+        <div class="outro-grid">
+          <div class="todo"><h3>⛰️ Чистилище</h3><p>Маршрут вверх: предчистилище, семь террас, Земной рай, встреча с Беатриче.</p></div>
+          <div class="todo"><h3>✨ Рай</h3><p>Маршрут наружу: Луна, планеты, звёзды, Перводвигатель, Эмпирей.</p></div>
         </div>
       </div>
-    </section>
-
-    <section id="facts" class="section">
-      <div class="wrap">
-        <div class="card panel">
-          <h2>Интересные факты</h2>
-          <p class="lead">Короткие подсказки, которые помогают читать поэму не только как фантастическое путешествие, но и как сложную карту мысли Данте.</p>
-          <div class="facts-grid">
-            <div class="fact-card"><strong>100 песен</strong><p class="small">Структура почти математическая: вступительная песнь и по 33 песни в каждой из трёх частей.</p></div>
-            <div class="fact-card"><strong>Терцины</strong><p class="small">Поэма написана цепной строфой: рифмы сцепляются, как звенья пути, и постоянно тянут читателя вперёд.</p></div>
-            <div class="fact-card"><strong>Холодный центр</strong><p class="small">Самый низ Ада у Данте не огненный, а ледяной: предательство изображено как полная неподвижность любви.</p></div>
-            <div class="fact-card"><strong>Вергилий как разум</strong><p class="small">Вергилий ведёт через Ад и Чистилище, но не входит в Рай: одного разума недостаточно для финального видения.</p></div>
-            <div class="fact-card"><strong>Чистилище меняет</strong><p class="small">В Аду души застыли в своём выборе, а в Чистилище они действительно проходят путь внутреннего изменения.</p></div>
-            <div class="fact-card"><strong>Беатриче</strong><p class="small">Она не только возлюбленная Данте, но и образ благодати, истины и нового способа видеть.</p></div>
-            <div class="fact-card"><strong>Политика в космосе</strong><p class="small">Данте вплетает в поэму флорентийские конфликты, изгнание и вопросы справедливой власти.</p></div>
-            <div class="fact-card"><strong>Рай без зависти</strong><p class="small">В Раю разные степени блаженства не вызывают конкуренции: каждая душа согласна со своим местом в целом.</p></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="route" class="section">
-      <div class="wrap split">
-        <article class="card panel">
-          <h2>Маршрут героя</h2>
-          <p class="lead">Поэма устроена как переориентация человека: от потери пути и страха к свободе, ответственности, любви и созерцанию.</p>
-        </article>
-        <article class="card panel path">
-          <div class="step"><div class="mark">1</div><div class="body"><h3>Тёмный лес</h3><p class="small">Начальная точка — моральная и духовная дезориентация.</p></div></div>
-          <div class="step"><div class="mark">2</div><div class="body"><h3>Вергилий</h3><p class="small">Разум, поэзия и античная мудрость помогают пройти через тьму.</p></div></div>
-          <div class="step"><div class="mark">3</div><div class="body"><h3>Гора Чистилища</h3><p class="small">Душа уже не заперта в ошибке: она учится желать правильно.</p></div></div>
-          <div class="step"><div class="mark">4</div><div class="body"><h3>Беатриче</h3><p class="small">В Раю к разуму добавляется благодать, любовь и созерцание.</p></div></div>
-          <div class="step"><div class="mark">5</div><div class="body"><h3>Эмпирей</h3><p class="small">Финал — не координата на карте, а предельный опыт порядка и смысла.</p></div></div>
-        </article>
-      </div>
-    </section>
-
-    <section id="keys" class="section">
-      <div class="wrap">
-        <div class="card panel">
-          <h2>Ключи к чтению</h2>
-          <div class="columns">
-            <div class="theme"><strong>Число 3</strong><p class="small">Три части, терцины, тройная композиция и постоянная идея порядка.</p></div>
-            <div class="theme"><strong>Контрапассо</strong><p class="small">В Аду наказание раскрывает внутреннюю форму совершённого выбора.</p></div>
-            <div class="theme"><strong>Любовь как двигатель</strong><p class="small">Проблема не в любви самой по себе, а в её направлении, мере и свободе.</p></div>
-          </div>
-          <div class="chips">
-            <span class="chip">Флоренция</span>
-            <span class="chip">античность и христианство</span>
-            <span class="chip">средневековая астрономия</span>
-            <span class="chip">аллегория</span>
-            <span class="chip">изгнание</span>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="wrap">Инфографика использует встроенные SVG-схемы, поэтому быстро открывается на GitHub Pages и не зависит от внешних картинок.</div>
-  </footer>
+    </div>
+  </section>
 
   <script>
     const art = {
-      inferno: `
-        <svg viewBox="0 0 420 360" role="img" aria-label="Воронка Ада">
-          <defs>
-            <linearGradient id="hellGrad" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stop-color="#ff7b4b" stop-opacity=".95"/>
-              <stop offset="55%" stop-color="#a62e2e" stop-opacity=".82"/>
-              <stop offset="100%" stop-color="#25101b" stop-opacity="1"/>
-            </linearGradient>
-            <filter id="glowHell"><feGaussianBlur stdDeviation="3.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          </defs>
-          <path d="M35 40 L385 40 L245 322 L175 322 Z" fill="url(#hellGrad)" opacity=".30"/>
-          <g fill="none" stroke="rgba(255,240,210,.36)" stroke-width="2">
-            <path d="M51 68 Q210 110 369 68"/><path d="M70 96 Q210 136 350 96"/><path d="M90 124 Q210 160 330 124"/><path d="M109 151 Q210 184 311 151"/><path d="M127 178 Q210 207 293 178"/><path d="M145 205 Q210 230 275 205"/><path d="M161 232 Q210 250 259 232"/><path d="M175 258 Q210 273 245 258"/><path d="M188 286 Q210 295 232 286"/>
-          </g>
-          <g font-family="system-ui, sans-serif" font-size="13" fill="#f7efe2" text-anchor="middle">
-            <text x="210" y="61">1 Лимб</text><text x="210" y="90">2 Похоть</text><text x="210" y="119">3 Чревоугодие</text><text x="210" y="148">4 Алчность</text><text x="210" y="176">5 Гнев</text><text x="210" y="204">6 Ересь</text><text x="210" y="231">7 Насилие</text><text x="210" y="258">8 Обман</text><text x="210" y="288">9 Предательство</text>
-          </g>
-          <g filter="url(#glowHell)"><path d="M184 324 C190 302 201 308 204 286 C214 306 232 305 235 326 C226 315 219 330 210 337 C202 327 194 315 184 324Z" fill="#ff6248"/><circle cx="210" cy="326" r="9" fill="#1a0c12" stroke="#ffb199"/></g>
-          <text x="210" y="345" text-anchor="middle" fill="#b9ad9d" font-size="13">вниз: от слабости к холодному предательству</text>
-        </svg>`,
-      purgatorio: `
-        <svg viewBox="0 0 420 360" role="img" aria-label="Гора Чистилища">
-          <defs>
-            <linearGradient id="mountGrad" x1="0" x2="0" y1="1" y2="0"><stop offset="0%" stop-color="#3b2a27"/><stop offset="55%" stop-color="#9b6a36"/><stop offset="100%" stop-color="#f3d486"/></linearGradient>
-            <linearGradient id="skyPur" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#1b3154" stop-opacity=".65"/><stop offset="100%" stop-color="#191522" stop-opacity="0"/></linearGradient>
-          </defs>
-          <rect width="420" height="360" fill="url(#skyPur)"/>
-          <circle cx="338" cy="50" r="28" fill="#f6d88f" opacity=".9"/>
-          <path d="M55 326 L210 35 L365 326 Z" fill="url(#mountGrad)" opacity=".62" stroke="rgba(255,240,210,.22)"/>
-          <g fill="none" stroke="rgba(255,240,210,.60)" stroke-width="6" stroke-linecap="round">
-            <path d="M102 276 C150 290 270 290 318 276"/><path d="M118 246 C160 260 260 260 302 246"/><path d="M134 216 C170 230 250 230 286 216"/><path d="M150 186 C180 199 240 199 270 186"/><path d="M166 156 C190 167 230 167 254 156"/><path d="M181 126 C196 134 224 134 239 126"/><path d="M195 96 C202 101 218 101 225 96"/>
-          </g>
-          <g font-family="system-ui, sans-serif" font-size="12" fill="#f7efe2"><text x="322" y="280">1 гордыня</text><text x="303" y="250">2 зависть</text><text x="287" y="220">3 гнев</text><text x="270" y="190">4 лень</text><text x="253" y="160">5 алчность</text><text x="239" y="130">6 чревоугодие</text><text x="224" y="101">7 похоть</text></g>
-          <path d="M182 78 Q210 45 238 78 Q210 66 182 78Z" fill="#9fe8ae" opacity=".9"/>
-          <text x="210" y="61" text-anchor="middle" fill="#f7efe2" font-size="13">Земной рай</text>
-          <path d="M80 326 C120 306 300 306 340 326" fill="none" stroke="#7bdcff" stroke-width="4" opacity=".65"/>
-          <text x="210" y="345" text-anchor="middle" fill="#b9ad9d" font-size="13">вверх: очищение желания и восстановление свободы</text>
-        </svg>`,
-      paradiso: `
-        <svg viewBox="0 0 420 360" role="img" aria-label="Небеса Рая">
-          <defs>
-            <radialGradient id="heavenGrad" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="#fff6ca"/><stop offset="35%" stop-color="#7bdcff" stop-opacity=".34"/><stop offset="100%" stop-color="#151525" stop-opacity="0"/></radialGradient>
-            <filter id="softGlow"><feGaussianBlur stdDeviation="2.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          </defs>
-          <circle cx="210" cy="180" r="150" fill="url(#heavenGrad)"/>
-          <g fill="none" stroke="rgba(123,220,255,.56)" stroke-width="1.6"><circle cx="210" cy="180" r="28"/><circle cx="210" cy="180" r="44"/><circle cx="210" cy="180" r="60"/><circle cx="210" cy="180" r="78"/><circle cx="210" cy="180" r="96"/><circle cx="210" cy="180" r="114"/><circle cx="210" cy="180" r="132"/><circle cx="210" cy="180" r="150"/></g>
-          <g fill="#f7efe2" font-size="10" font-family="system-ui, sans-serif"><text x="222" y="154">Луна</text><text x="253" y="172">Меркурий</text><text x="261" y="130">Венера</text><text x="285" y="204">Солнце</text><text x="151" y="111">Марс</text><text x="117" y="199">Юпитер</text><text x="266" y="74">Сатурн</text><text x="72" y="107">Звёзды</text><text x="247" y="313">Перводвигатель</text></g>
-          <g filter="url(#softGlow)"><circle cx="210" cy="180" r="16" fill="#fff6ca"/><circle cx="277" cy="109" r="4" fill="#7bdcff"/><circle cx="112" cy="153" r="3" fill="#fff6ca"/><circle cx="327" cy="237" r="3" fill="#7bdcff"/><circle cx="174" cy="52" r="3" fill="#fff6ca"/><circle cx="92" cy="260" r="3" fill="#7bdcff"/></g>
-          <path d="M130 300 C185 332 258 331 316 293" fill="none" stroke="rgba(255,246,202,.6)" stroke-width="2"/>
-          <text x="210" y="345" text-anchor="middle" fill="#b9ad9d" font-size="13">наружу: рост света, согласия и созерцания</text>
-        </svg>`
+      forest: `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="gForest" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#17121b"/><stop offset="1" stop-color="#060508"/></linearGradient><radialGradient id="moonForest" cx="62%" cy="22%" r="24%"><stop stop-color="#d9ad6a" stop-opacity=".42"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs><rect width="1600" height="900" fill="url(#gForest)"/><rect width="1600" height="900" fill="url(#moonForest)"/><g stroke="#2f2730" stroke-width="18" stroke-linecap="round"><path d="M170 900 L260 160"/><path d="M430 900 L360 90"/><path d="M760 900 L820 130"/><path d="M1080 900 L990 120"/><path d="M1340 900 L1270 180"/></g><g fill="#09080d"><path d="M0 790 C230 710 370 820 590 760 C820 690 1040 800 1600 710 L1600 900 L0 900Z"/><path d="M255 232 L120 420 L310 350 L180 560 L395 410 L260 160Z" opacity=".72"/><path d="M820 150 L695 340 L870 292 L725 532 L945 390Z" opacity=".7"/></g><path d="M1045 745 C1120 695 1220 703 1285 745" fill="none" stroke="#d9ad6a" stroke-width="3" opacity=".62"/><circle cx="1180" cy="704" r="7" fill="#d9ad6a" opacity=".8"/></svg>`,
+      gate: `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="gGate" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#1a1215"/><stop offset="1" stop-color="#050405"/></linearGradient><radialGradient id="gateGlow" cx="50%" cy="60%" r="38%"><stop stop-color="#ff6248" stop-opacity=".36"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs><rect width="1600" height="900" fill="url(#gGate)"/><rect width="1600" height="900" fill="url(#gateGlow)"/><path d="M470 860 V355 C470 180 595 88 800 88 C1005 88 1130 180 1130 355 V860 H980 V356 C980 260 920 205 800 205 C680 205 620 260 620 356 V860Z" fill="#171014" stroke="#65433d" stroke-width="10"/><path d="M650 330 H950" stroke="#d9ad6a" stroke-width="4" opacity=".5"/><text x="800" y="300" text-anchor="middle" fill="#d9ad6a" font-size="52" font-family="serif" opacity=".9">ВРАТА</text><path d="M0 820 C320 760 510 830 805 780 C1120 725 1320 800 1600 755 L1600 900 L0 900Z" fill="#070507"/></svg>`,
+      acheron: `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="gAch" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#0e1118"/><stop offset="1" stop-color="#060509"/></linearGradient><linearGradient id="riverAch" x1="0" x2="1"><stop stop-color="#282635"/><stop offset=".5" stop-color="#7bdcff" stop-opacity=".32"/><stop offset="1" stop-color="#201923"/></linearGradient></defs><rect width="1600" height="900" fill="url(#gAch)"/><path d="M0 555 C270 480 410 640 670 575 C930 510 1070 650 1600 555 L1600 900 L0 900Z" fill="url(#riverAch)" opacity=".72"/><g stroke="#fff3df" stroke-opacity=".18" stroke-width="2"><path d="M120 640 C380 580 560 670 850 620 C1100 575 1280 640 1510 600"/><path d="M50 735 C380 690 650 780 1010 715 C1230 675 1380 700 1600 672"/></g><path d="M820 620 L960 650 L835 690 L690 660Z" fill="#0a080c" stroke="#d9ad6a" stroke-opacity=".35"/><path d="M838 614 L875 560" stroke="#d9ad6a" stroke-width="4" opacity=".5"/><g fill="#c5b7a4" opacity=".55"><circle cx="320" cy="510" r="5"/><circle cx="390" cy="535" r="4"/><circle cx="470" cy="505" r="4"/><circle cx="1090" cy="520" r="5"/><circle cx="1160" cy="545" r="4"/><circle cx="1250" cy="510" r="4"/></g></svg>`,
+      limbo: `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="gLimbo" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#151a24"/><stop offset="1" stop-color="#09080d"/></linearGradient><radialGradient id="limboGlow" cx="50%" cy="28%" r="36%"><stop stop-color="#d9ad6a" stop-opacity=".24"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs><rect width="1600" height="900" fill="url(#gLimbo)"/><rect width="1600" height="900" fill="url(#limboGlow)"/><path d="M300 730 V430 H420 V330 H550 V430 H700 V300 H830 V430 H980 V350 H1110 V430 H1240 V730Z" fill="#151016" stroke="#d9ad6a" stroke-opacity=".32" stroke-width="5"/><g fill="#d9ad6a" opacity=".35"><rect x="370" y="485" width="42" height="95"/><rect x="610" y="480" width="42" height="100"/><rect x="790" y="470" width="42" height="110"/><rect x="1035" y="480" width="42" height="100"/></g><path d="M0 735 C350 690 590 755 820 725 C1120 685 1340 720 1600 690 L1600 900 L0 900Z" fill="#07070b"/></svg>`,
+      storm: `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><defs><radialGradient id="stormGlow" cx="55%" cy="45%" r="46%"><stop stop-color="#ff6248" stop-opacity=".28"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient><linearGradient id="stormBg" x1="0" x2="1"><stop stop-color="#110b12"/><stop offset="1" stop-color="#211622"/></linearGradient></defs><rect width="1600" height="900" fill="url(#stormBg)"/><rect width="1600" height="900" fill="url(#stormGlow)"/><g fill="none" stroke="#fff3df" stroke-opacity=".25" stroke-width="9" stroke-linecap="round"><path d="M260 260 C520 80 1040 110 1190 340 C1350 585 950 735 680 610 C470 510 625 320 850 360 C1040 392 1070 540 910 590"/><path d="M150 570 C420 410 740 450 860 585 C970 710 1230 720 1450 585"/><path d="M450 190 C720 60 1060 120 1230 240"/></g><g fill="#d9ad6a" opacity=".62"><circle cx="725" cy="455" r="9"/><circle cx="765" cy="470" r="7"/><path d="M725 464 C700 500 695 535 672 565" stroke="#d9ad6a" stroke-width="5" fill="none"/><path d="M765 478 C790 510 800 535 830 560" stroke="#d9ad6a" stroke-width="5" fill="none"/></g></svg>`,
+      rain: `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="rainBg" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#151820"/><stop offset="1" stop-color="#09080a"/></linearGradient></defs><rect width="1600" height="900" fill="url(#rainBg)"/><g stroke="#7bdcff" stroke-opacity=".25" stroke-width="3"><path d="M120 70 L70 260"/><path d="M280 20 L220 245"/><path d="M480 60 L420 285"/><path d="M680 0 L620 245"/><path d="M870 60 L810 290"/><path d="M1070 30 L1010 260"/><path d="M1280 70 L1220 300"/><path d="M1460 10 L1400 250"/></g><path d="M0 700 C250 640 500 710 780 660 C1090 605 1300 660 1600 620 L1600 900 L0 900Z" fill="#1d1715"/><g fill="#0b0809" stroke="#d9ad6a" stroke-opacity=".24" stroke-width="5"><circle cx="795" cy="585" r="82"/><circle cx="725" cy="570" r="54"/><circle cx="865" cy="570" r="54"/></g><g fill="#ff6248" opacity=".65"><circle cx="725" cy="560" r="8"/><circle cx="795" cy="570" r="8"/><circle cx="865" cy="560" r="8"/></g></svg>`,
+      stones: `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="stoneBg" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#1b1411"/><stop offset="1" stop-color="#070506"/></linearGradient></defs><rect width="1600" height="900" fill="url(#stoneBg)"/><g opacity=".34" stroke="#d9ad6a" stroke-width="4" fill="none"><circle cx="390" cy="590" r="94"/><circle cx="715" cy="650" r="118"/><circle cx="1055" cy="560" r="105"/><circle cx="1280" cy="690" r="82"/></g><path d="M0 760 C350 695 550 805 900 735 C1150 685 1340 730 1600 690 L1600 900 L0 900Z" fill="#090608"/><g stroke="#fff3df" stroke-opacity=".18" stroke-width="9" stroke-linecap="round"><path d="M300 560 L485 620"/><path d="M950 555 L1165 502"/><path d="M620 730 L805 660"/></g></svg>`,
+      styx: `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="styxBg" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#12151d"/><stop offset="1" stop-color="#070608"/></linearGradient><radialGradient id="cityGlow" cx="70%" cy="38%" r="35%"><stop stop-color="#ff6248" stop-opacity=".35"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs><rect width="1600" height="900" fill="url(#styxBg)"/><rect width="1600" height="900" fill="url(#cityGlow)"/><path d="M930 540 V370 L990 310 L1060 370 V330 L1140 275 L1240 350 V300 L1330 250 L1435 345 V540Z" fill="#140d0e" stroke="#ff6248" stroke-opacity=".35" stroke-width="5"/><g fill="#ff6248" opacity=".38"><rect x="1008" y="390" width="38" height="74"/><rect x="1175" y="378" width="48" height="82"/><rect x="1320" y="368" width="46" height="88"/></g><path d="M0 555 C320 500 520 650 820 585 C1110 520 1280 610 1600 560 L1600 900 L0 900Z" fill="#1a2025" opacity=".83"/><g stroke="#7bdcff" stroke-opacity=".20" stroke-width="4"><path d="M80 655 C420 570 630 730 1020 640 C1230 595 1400 620 1600 580"/><path d="M0 760 C360 710 610 795 910 740 C1210 680 1360 725 1600 690"/></g></svg>`,
+      tombs: `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="tombBg" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#1b1110"/><stop offset="1" stop-color="#070506"/></linearGradient><radialGradient id="tombGlow" cx="50%" cy="58%" r="45%"><stop stop-color="#ff6248" stop-opacity=".34"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs><rect width="1600" height="900" fill="url(#tombBg)"/><rect width="1600" height="900" fill="url(#tombGlow)"/><g transform="skewX(-10)" fill="#1a1111" stroke="#d9ad6a" stroke-opacity=".30" stroke-width="4"><rect x="250" y="520" width="270" height="90" rx="8"/><rect x="620" y="460" width="300" height="95" rx="8"/><rect x="1000" y="535" width="300" height="90" rx="8"/><rect x="480" y="675" width="330" height="90" rx="8"/><rect x="900" y="690" width="350" height="90" rx="8"/></g><g fill="#ff6248" opacity=".42"><path d="M320 510 C340 470 365 485 370 438 C400 490 430 485 440 520Z"/><path d="M710 448 C740 395 780 415 785 365 C825 430 855 420 870 458Z"/><path d="M1085 525 C1110 475 1155 500 1160 450 C1195 505 1230 500 1240 536Z"/></g></svg>`,
+      violence: `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="violBg" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#1e1110"/><stop offset="1" stop-color="#070506"/></linearGradient><linearGradient id="redRiver" x1="0" x2="1"><stop stop-color="#4b1111"/><stop offset=".55" stop-color="#ff6248" stop-opacity=".52"/><stop offset="1" stop-color="#3b0d0d"/></linearGradient></defs><rect width="1600" height="900" fill="url(#violBg)"/><path d="M0 620 C250 560 430 690 720 610 C980 540 1190 665 1600 575 L1600 735 C1250 810 980 700 710 775 C420 850 220 710 0 790Z" fill="url(#redRiver)" opacity=".72"/><g stroke="#6b5140" stroke-width="13" stroke-linecap="round" opacity=".9"><path d="M260 760 C280 640 245 560 310 430"/><path d="M310 430 C270 410 240 385 220 350"/><path d="M310 430 C350 398 382 360 410 305"/><path d="M1210 760 C1235 620 1190 530 1270 390"/><path d="M1270 390 C1225 360 1190 330 1165 285"/><path d="M1270 390 C1320 355 1350 322 1380 260"/></g><g fill="#f0a04b" opacity=".55"><circle cx="420" cy="250" r="5"/><circle cx="960" cy="325" r="4"/><circle cx="1100" cy="240" r="5"/><circle cx="600" cy="360" r="4"/></g></svg>`,
+      malebolge: `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><defs><radialGradient id="malGlow" cx="50%" cy="55%" r="52%"><stop stop-color="#d9ad6a" stop-opacity=".23"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient><linearGradient id="malBg" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#181317"/><stop offset="1" stop-color="#060507"/></linearGradient></defs><rect width="1600" height="900" fill="url(#malBg)"/><rect width="1600" height="900" fill="url(#malGlow)"/><g fill="none" stroke="#fff3df" stroke-opacity=".23" stroke-width="20"><ellipse cx="800" cy="610" rx="640" ry="250"/><ellipse cx="800" cy="610" rx="520" ry="205"/><ellipse cx="800" cy="610" rx="400" ry="160"/><ellipse cx="800" cy="610" rx="285" ry="115"/><ellipse cx="800" cy="610" rx="170" ry="70"/></g><g stroke="#d9ad6a" stroke-opacity=".33" stroke-width="13" fill="none"><path d="M350 455 C520 540 650 575 800 610 C960 648 1115 690 1280 790"/><path d="M540 370 C655 470 740 540 800 610 C870 690 930 750 1030 840"/></g><circle cx="800" cy="610" r="38" fill="#060507" stroke="#ff6248" stroke-opacity=".45" stroke-width="5"/></svg>`,
+      giants: `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="giantBg" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#11131b"/><stop offset="1" stop-color="#050507"/></linearGradient><radialGradient id="giantGlow" cx="50%" cy="42%" r="44%"><stop stop-color="#7bdcff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs><rect width="1600" height="900" fill="url(#giantBg)"/><rect width="1600" height="900" fill="url(#giantGlow)"/><g fill="#171014" stroke="#d9ad6a" stroke-opacity=".22" stroke-width="7"><rect x="230" y="120" width="170" height="760" rx="80"/><rect x="690" y="40" width="220" height="850" rx="100"/><rect x="1190" y="160" width="170" height="720" rx="80"/></g><g fill="#0a080c"><circle cx="315" cy="135" r="78"/><circle cx="800" cy="60" r="105"/><circle cx="1275" cy="175" r="78"/></g><g fill="#d9ad6a" opacity=".72"><circle cx="760" cy="725" r="8"/><circle cx="792" cy="735" r="7"/></g><path d="M0 810 C320 750 600 840 880 785 C1160 735 1320 790 1600 750 L1600 900 L0 900Z" fill="#070609"/></svg>`,
+      ice: `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="iceBg" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#0e1620"/><stop offset="1" stop-color="#050608"/></linearGradient><radialGradient id="iceGlow" cx="50%" cy="58%" r="45%"><stop stop-color="#c8f3ff" stop-opacity=".30"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs><rect width="1600" height="900" fill="url(#iceBg)"/><rect width="1600" height="900" fill="url(#iceGlow)"/><path d="M0 610 C340 535 610 650 870 600 C1120 552 1320 620 1600 565 L1600 900 L0 900Z" fill="#c8f3ff" opacity=".18"/><g stroke="#c8f3ff" stroke-opacity=".34" stroke-width="3" fill="none"><path d="M110 690 L350 640 L570 705 L780 625 L1030 700 L1280 625 L1510 675"/><path d="M210 790 L480 730 L760 810 L1020 735 L1360 795"/><path d="M720 600 L690 850"/><path d="M940 585 L990 860"/></g><g fill="#050608" opacity=".86"><path d="M800 250 C875 345 915 495 900 720 L700 720 C690 500 730 350 800 250Z"/><path d="M710 435 C520 390 410 305 340 210 C430 480 550 610 710 650Z"/><path d="M890 435 C1080 390 1190 305 1260 210 C1170 480 1050 610 890 650Z"/></g><circle cx="760" cy="382" r="7" fill="#ff6248" opacity=".75"/><circle cx="840" cy="382" r="7" fill="#ff6248" opacity=".75"/></svg>`,
+      stars: `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="starBg" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#080915"/><stop offset="1" stop-color="#040407"/></linearGradient><radialGradient id="exitGlow" cx="52%" cy="28%" r="35%"><stop stop-color="#c8f3ff" stop-opacity=".35"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs><rect width="1600" height="900" fill="url(#starBg)"/><rect width="1600" height="900" fill="url(#exitGlow)"/><g fill="#fff3df" opacity=".86"><circle cx="420" cy="130" r="2"/><circle cx="610" cy="90" r="2.5"/><circle cx="760" cy="150" r="2"/><circle cx="930" cy="80" r="2.5"/><circle cx="1140" cy="150" r="2"/><circle cx="1250" cy="96" r="2"/><circle cx="520" cy="240" r="1.8"/><circle cx="1010" cy="245" r="1.8"/></g><path d="M0 590 C260 515 430 650 650 580 C835 520 940 550 1060 620 C1260 735 1435 730 1600 670 L1600 900 L0 900Z" fill="#060509"/><path d="M560 730 C640 520 730 430 810 390 C920 455 1010 555 1085 735 C915 690 755 690 560 730Z" fill="#11101a" stroke="#c8f3ff" stroke-opacity=".28" stroke-width="5"/><path d="M690 590 C760 520 850 512 925 590" fill="none" stroke="#d9ad6a" stroke-width="4" opacity=".65"/></svg>`
     };
 
-    const data = {
-      inferno: {
-        name: 'Ад', icon: '🔥', color: 'var(--inferno)',
-        visualTitle: 'Ад — воронка вниз',
-        visualSubtitle: 'Подземный провал под Иерусалимом: чем ниже спуск, тем более сознательным и холодным становится зло.',
-        caption: 'Круги Ада — это градация искажённой воли: от слабости и страсти к обману и предательству.',
-        idea: 'Мир застывшего выбора: чем ниже, тем сознательнее и холоднее зло.',
-        facts: ['В центре Ада находится Люцифер, вмёрзший в лёд.', 'Выход из Ада связан с переворотом направления: Данте и Вергилий проходят через центр Земли.', 'Контрапассо показывает внутреннюю форму греха через образ наказания.'],
-        levels: [
-          {n:'0', title:'Преддверие', sub:'нерешительность и духовная пустота', figures:'безымянные души, Харон', theme:'отказ от выбора', logic:'Данте начинает с тех, кто не стал ни добрым, ни злым: их жизнь прошла мимо главного решения.', lesson:'Нейтральность в главных вопросах тоже становится выбором.'},
-          {n:'1', title:'Лимб', sub:'добродетель без христианской надежды', figures:'Гомер, Гораций, Овидий, Саладин', theme:'границы разума', logic:'Здесь благородные нехристиане не мучимы грубо, но лишены полноты надежды.', lesson:'Античная мудрость велика, но для Данте она не завершает путь.'},
-          {n:'2', title:'Похоть', sub:'любовь, ставшая бурей', figures:'Франческа да Римини, Паоло', theme:'страсть и самооправдание', logic:'Желание изображено как сила, которая несёт человека, если он отдаёт ей управление.', lesson:'Данте сочувствует, но показывает опасность красивого самообмана.'},
-          {n:'3', title:'Чревоугодие', sub:'жизнь, сведённая к потреблению', figures:'Цербер, Чакко', theme:'неумеренность', logic:'Человек, живущий только насыщением, теряет вертикаль и становится тяжёлым.', lesson:'Проблема не в теле, а в сужении личности до аппетита.'},
-          {n:'4', title:'Алчность и расточительность', sub:'искажённое отношение к вещам', figures:'Плутос', theme:'богатство как идол', logic:'Две крайности выглядят противоположными, но обе подчиняют душу вещам и статусу.', lesson:'Вещи должны служить жизни, а не становиться её центром.'},
-          {n:'5', title:'Гнев и унылая злоба', sub:'эмоции, ставшие средой обитания', figures:'Флегий', theme:'ярость и пассивная обида', logic:'Открытый гнев и скрытая мрачность оказываются рядом: оба способа запирают человека в себе.', lesson:'Не всякая злость плоха, но застревание в ней разрушает свободу.'},
-          {n:'6', title:'Ересь', sub:'разум, закрывшийся от вечности', figures:'Фарината, Кавальканте', theme:'гордая уверенность', logic:'Ошибка связана не только с идеями, но и с упорной самодостаточностью.', lesson:'Интеллект без смирения легко превращается в стену.'},
-          {n:'7', title:'Насилие', sub:'против ближнего, себя и порядка мира', figures:'Минотавр, кентавры', theme:'разрушительная сила', logic:'Насилие ломает связь человека с людьми, с собой и с высшим порядком.', lesson:'Чем больше силы, тем важнее вопрос, чему она служит.'},
-          {n:'8', title:'Обман', sub:'Малебольдже: зло интеллекта', figures:'Улисс, лукавые советники, лицемеры', theme:'ум без совести', logic:'Обман глубже насилия, потому что использует речь и разум против доверия.', lesson:'Самые опасные ошибки могут выглядеть умно и убедительно.'},
-          {n:'9', title:'Предательство', sub:'ледяной центр Ада', figures:'Каин, Иуда, Брут, Кассий, Люцифер', theme:'измена любви и доверия', logic:'Внизу не огонь, а холод: полное отсутствие живой любви и движения.', lesson:'Для Данте худшее зло — не страсть, а холодная измена связи.'}
-        ]
-      },
-      purgatorio: {
-        name: 'Чистилище', icon: '⛰️', color: 'var(--purgatorio)',
-        visualTitle: 'Чистилище — гора очищения',
-        visualSubtitle: 'Гора на противоположной стороне Земли: здесь душа не застывает, а проходит путь исправления любви.',
-        caption: 'Семь террас соответствуют очищению семи корневых искажений любви. На вершине — Земной рай.',
-        idea: 'Мир надежды: душа страдает не бессмысленно, а учится заново любить.',
-        facts: ['Это мир времени, движения и перемены.', 'Души здесь помогают друг другу молитвами и песнями.', 'На вершине Вергилия сменяет Беатриче.'],
-        levels: [
-          {n:'A', title:'Предчистилище', sub:'порог перемены', figures:'Катон, Манфред, запоздало раскаявшиеся', theme:'начало надежды', logic:'Здесь те, кто повернулся к добру поздно: путь начат, но требует времени.', lesson:'Даже поздний поворот важен, если он настоящий.'},
-          {n:'1', title:'Гордыня', sub:'тяжесть раздутого Я', figures:'Одеризи, Омберто', theme:'смирение', logic:'Первой очищается любовь к собственному превосходству.', lesson:'Свобода начинается с правды о собственной мере.'},
-          {n:'2', title:'Зависть', sub:'боль от чужого блага', figures:'Сапия', theme:'радость за другого', logic:'Зависть делает благо ближнего угрозой, хотя добро не уменьшается от разделения.', lesson:'Чужой успех не обязан быть обвинением против тебя.'},
-          {n:'3', title:'Гнев', sub:'любовь к справедливости без света', figures:'Марко Ломбардо', theme:'очищение желания наказать', logic:'Гнев может начинаться с чувства правды, но легко превращает человека в пленника реакции.', lesson:'Справедливость требует ясности, а не только жара.'},
-          {n:'4', title:'Лень', sub:'слабая любовь к добру', figures:'аббат Сан-Дзено', theme:'энергия движения', logic:'Добро известно, но не выбрано делом.', lesson:'Любовь проверяется не настроением, а движением.'},
-          {n:'5', title:'Алчность', sub:'взгляд, прикованный к земле', figures:'папа Адриан V, Стаций', theme:'освобождение от обладания', logic:'Желание иметь может стать настолько плотным, что человек перестаёт видеть небо.', lesson:'Иметь можно многое, но нельзя позволить вещам иметь тебя.'},
-          {n:'6', title:'Чревоугодие', sub:'желание меры', figures:'Форезе Донати', theme:'восстановление вкуса', logic:'Очищается не тело, а власть потребления над волей.', lesson:'Мера возвращает радость, а не уничтожает её.'},
-          {n:'7', title:'Похоть', sub:'огонь желания', figures:'Гвидо Гвиницелли, Арнаут Даниэль', theme:'любовь и целомудрие', logic:'Желание не уничтожается, а просветляется.', lesson:'Очищение — это преобразование, а не простое подавление.'},
-          {n:'E', title:'Земной рай', sub:'встреча с Беатриче', figures:'Матильда, Беатриче', theme:'переход к созерцанию', logic:'Естественный разум довёл героя до предела; дальше начинается новый уровень зрения.', lesson:'Иногда лучший проводник должен уйти, чтобы путь продолжился.'}
-        ]
-      },
-      paradiso: {
-        name: 'Рай', icon: '✨', color: 'var(--paradiso)',
-        visualTitle: 'Рай — небесные сферы',
-        visualSubtitle: 'Геоцентрический космос: Данте поднимается через небеса Луны, планет, звёзд и Перводвигателя к Эмпирею.',
-        caption: 'Уровни Рая не создают зависти: каждая душа блаженна в своей мере, потому что согласна с целым.',
-        idea: 'Мир света: разные степени блаженства не конкурируют, потому что каждая душа согласна с целым.',
-        facts: ['Рай строится не на зрелищах, а на росте понимания.', 'Даже в Раю Данте говорит о политике и справедливости.', 'Эмпирей — не обычное место, а образ полноты смысла.'],
-        levels: [
-          {n:'1', title:'Луна', sub:'неустойчивые обеты', figures:'Пиккарда Донати', theme:'верность', logic:'Нижнее небо показывает слабость постоянства.', lesson:'Свобода требует устойчивости, а не только искреннего порыва.'},
-          {n:'2', title:'Меркурий', sub:'добрые дела ради славы', figures:'Юстиниан', theme:'мотивы поступка', logic:'Действие было великим, но примесь честолюбия уменьшала прозрачность любви.', lesson:'Даже добро меняет смысл в зависимости от мотива.'},
-          {n:'3', title:'Венера', sub:'любовь, очищенная от обладания', figures:'Карл Мартелл, Куницца', theme:'эрос и милость', logic:'Человеческая любовь может стать ступенью в больший порядок.', lesson:'Любовь не должна замыкаться на себе.'},
-          {n:'4', title:'Солнце', sub:'мудрость и богословие', figures:'Фома Аквинский, Бонавентура', theme:'интеллект как свет', logic:'Знание здесь не холодное: оно радостно вращается вокруг истины.', lesson:'Мысль становится светом, когда соединена с любовью.'},
-          {n:'5', title:'Марс', sub:'мужество и свидетельство', figures:'Каччагвида', theme:'память рода и миссия', logic:'Данте узнаёт о своём изгнании и получает задачу говорить правду.', lesson:'Личная боль может стать частью призвания.'},
-          {n:'6', title:'Юпитер', sub:'справедливость правителей', figures:'Давид, Траян, Рифей', theme:'закон и милость', logic:'Образ орла показывает политический идеал справедливой власти.', lesson:'Правосудие выше партийной выгоды и славы.'},
-          {n:'7', title:'Сатурн', sub:'созерцание', figures:'Пётр Дамиани, Бенедикт', theme:'тишина и высота', logic:'Созерцание требует внутренней тишины.', lesson:'Не всякое знание достигается спором.'},
-          {n:'8', title:'Звёздное небо', sub:'вера, надежда и любовь', figures:'апостолы Пётр, Иаков, Иоанн', theme:'экзамен души', logic:'Данте проходит проверку главных добродетелей.', lesson:'Понимание должно стать личной позицией.'},
-          {n:'9', title:'Перводвигатель', sub:'ангельский порядок', figures:'ангельские чины', theme:'движение от любви', logic:'Космос держится не механикой, а любовью.', lesson:'Порядок мира — это порядок желания.'},
-          {n:'∞', title:'Эмпирей', sub:'белая роза и финальное видение', figures:'Бернар Клервоский, Мария, Беатриче', theme:'созерцание Бога', logic:'Пространственная карта заканчивается образом полноты смысла.', lesson:'Финал поэмы — преображение взгляда.'}
-        ]
-      }
-    };
+    const locations = [
+      { art: 'forest', accent: '#d9ad6a', title: 'Тёмный лес', label: 'Пролог · песнь I', idea: 'Путь начинается не с наказания, а с признания: «я сбился».', text: 'Данте оказывается в темноте и не может просто подняться к свету: страх, растерянность и внутренний тупик сильнее прямого желания выбраться.', sees: 'лес, холм света, звери-препятствия, появление Вергилия', change: 'герой перестаёт идти один: ему нужен проводник и честный спуск через собственную тьму', tags: ['потеря пути','страх','Вергилий'] },
+      { art: 'gate', accent: '#ff6248', title: 'Врата Ада', label: 'Порог · песнь III', idea: 'Порог отделяет самообман от последствий.', text: 'Надпись на вратах задаёт тон всему спуску: дальше герой будет видеть не абстрактное зло, а выборы, доведённые до своей окончательной формы.', sees: 'каменные врата, тяжёлая тишина, переход из мира надежды в мир расплаты', change: 'Данте впервые понимает, что путешествие будет не зрелищем, а испытанием взгляда', tags: ['порог','последствия','страх'] },
+      { art: 'acheron', accent: '#7bdcff', title: 'Преддверие и Ахерон', label: 'Берег реки · песнь III', idea: 'Невыбор тоже формирует судьбу: пустая жизнь превращается в шум без направления.', text: 'Перед переправой Данте видит души, которые уклонились от главного выбора. Затем появляется Ахерон — граница, за которой начинается настоящий спуск.', sees: 'толпа у берега, Харон, лодка, тёмная вода', change: 'герой сталкивается с мыслью, что недостаточно просто «не быть плохим» — нужно иметь направление', tags: ['граница','невыбор','Ахерон'] },
+      { art: 'limbo', accent: '#d9ad6a', title: 'Лимб', label: 'Первый круг · песнь IV', idea: 'Разум и благородство велики, но у Данте они не закрывают вопрос предельной надежды.', text: 'Лимб не похож на грубое мучение: здесь достоинство, мудрость и спокойная печаль. Это место показывает уважение Данте к античности и одновременно её предел.', sees: 'замок мудрецов, ровный свет, великие поэты и мыслители', change: 'Данте принимает Вергилия как учителя, но видит, что даже лучший земной разум имеет границу', tags: ['Лимб','античность','разум'] },
+      { art: 'storm', accent: '#ff6248', title: 'Буря страсти', label: 'Второй круг · песнь V', idea: 'Желание без внутреннего управления становится погодой, которая несёт человека.', text: 'После суда Миноса Данте попадает в вихрь. История Франчески звучит красиво и печально, поэтому сцена проверяет не только мораль, но и способность не спутать сочувствие с оправданием.', sees: 'Минос, тёмный ветер, Франческа и Паоло', change: 'герой учится видеть, как прекрасная речь может прикрывать несвободу', tags: ['страсть','Франческа','самооправдание'] },
+      { art: 'rain', accent: '#7bdcff', title: 'Грязный дождь', label: 'Третий круг · песнь VI', idea: 'Когда жизнь сужается до потребления, мир становится серым и липким.', text: 'Круг чревоугодия нарочито лишён красоты: холодный дождь, тяжёлая земля и Цербер показывают человека, сведённого к аппетиту.', sees: 'непрерывный дождь, грязь, Цербер, Чакко', change: 'Данте начинает понимать, что грех — это не только поступок, но и среда, в которую человек сам себя помещает', tags: ['чревоугодие','потребление','Цербер'] },
+      { art: 'stones', accent: '#f0a04b', title: 'Тяжести алчности', label: 'Четвёртый круг · песнь VII', idea: 'Накопление и расточение — две формы зависимости от вещей.', text: 'Две группы катят тяжести навстречу друг другу. Они спорят, но зеркально похожи: и скупость, и расточительность делают вещь центром жизни.', sees: 'огромные грузы, круговое движение, Плутос', change: 'герой видит, что противоположные крайности могут иметь один корень', tags: ['деньги','вещи','зависимость'] },
+      { art: 'styx', accent: '#ff6248', title: 'Стикс и город Дит', label: 'Пятый круг · песни VII–IX', idea: 'Гнев затягивает вниз, а обида строит крепость.', text: 'Сначала путь идёт через болотистый Стикс, затем — к закрытому городу Дит. Активная ярость и внутренняя мрачность оказываются двумя сторонами одной несвободы.', sees: 'болото, Флегий, башни Дита, закрытые ворота', change: 'Данте видит, что эмоция может стать целым городом обороны против света', tags: ['гнев','Стикс','Дит'] },
+      { art: 'tombs', accent: '#ff6248', title: 'Горящие гробницы', label: 'Шестой круг · песни X–XI', idea: 'Закрытая уверенность может стать собственной тюрьмой.', text: 'В городе Дит Данте встречает еретиков в раскрытых гробницах. Это сцена о разуме, который стал не поиском истины, а герметичной системой.', sees: 'огненные гробницы, Фарината, Кавальканте', change: 'герой понимает, что интеллект может освобождать, а может запирать человека в гордой неподвижности', tags: ['ересь','самоуверенность','Дит'] },
+      { art: 'violence', accent: '#ff6248', title: 'Круг насилия', label: 'Седьмой круг · песни XII–XVII', idea: 'Сила, оторванная от любви и справедливости, разрушает саму среду жизни.', text: 'Седьмой круг устроен как несколько ландшафтов: река, мрачный лес и выжженная равнина. Везде показана энергия, которая перестала защищать жизнь и начала её ломать.', sees: 'Флегетон, кентавры, сухие деревья, раскалённая пустыня', change: 'Данте учится отличать мужество от разрушительности', tags: ['насилие','сила','разрушение'] },
+      { art: 'malebolge', accent: '#d9ad6a', title: 'Малебольдже', label: 'Восьмой круг · песни XVIII–XXX', idea: 'Обман опаснее грубой силы, потому что использует разум и язык против доверия.', text: 'Восьмой круг выглядит почти как инженерная система: десять рвов, мосты, переходы. Это зло уже не стихийное, а организованное и изобретательное.', sees: 'десять рвов, каменные мосты, лукавые советники, лицемеры, фальсификаторы', change: 'герой видит, что ум без совести способен строить целые архитектуры лжи', tags: ['обман','Малебольдже','язык'] },
+      { art: 'giants', accent: '#7bdcff', title: 'Колодец гигантов', label: 'Переход · песнь XXXI', idea: 'Безмерная сила без мудрости становится переходом к бездне.', text: 'Перед последним кругом стоят гиганты. Они похожи на башни: огромные, пугающие, но внутренне бессильные, потому что их мощь не соединена с смыслом.', sees: 'гигантские фигуры, глубокий колодец, спуск к льду', change: 'масштаб перестаёт впечатлять сам по себе: Данте видит пустоту силы без разума', tags: ['гиганты','переход','сила'] },
+      { art: 'ice', accent: '#c8f3ff', title: 'Коцит и Люцифер', label: 'Девятый круг · песни XXXII–XXXIV', idea: 'В самом низу зло уже не кипит, а замерзает: это полная неподвижность связи.', text: 'Последний круг — ледяное озеро Коцит. Здесь наказано предательство: не бурная страсть, а холодная измена доверию, родству, гостеприимству и благу.', sees: 'лёд, тишина, тень Люцифера в центре мира', change: 'герой достигает нижней точки и видит, что абсолютное зло не величественно, а бессильно и замкнуто', tags: ['Коцит','предательство','Люцифер'] },
+      { art: 'stars', accent: '#c8f3ff', title: 'Выход к звёздам', label: 'Финал Ада · песнь XXXIV', idea: 'Нижняя точка оказывается точкой разворота: путь продолжается вверх.', text: 'Данте и Вергилий проходят через центр Земли и меняют направление. Последний образ первой части — не адская тьма, а звёзды.', sees: 'узкий проход, смена направления, ночное небо', change: 'герой выходит не «готовым», но способным начать восхождение', tags: ['звёзды','разворот','надежда'] }
+    ];
 
-    const list = document.querySelector('#list');
-    const detail = document.querySelector('#detail');
-    const buttons = [...document.querySelectorAll('[data-part]')];
-    const modePill = document.querySelector('#modePill');
-    const search = document.querySelector('#search');
-    const visual = document.querySelector('#visual');
-    const visualCopy = document.querySelector('#visualCopy');
-    const visualCaption = document.querySelector('#visualCaption');
-    const galleryGrid = document.querySelector('#galleryGrid');
-    let currentPart = 'inferno';
-    let currentIndex = 0;
+    const journey = document.querySelector('#journey');
+    const rail = document.querySelector('#rail');
+    const progress = document.querySelector('#progress');
 
-    function allLevels() {
-      return Object.entries(data).flatMap(([part, obj]) => obj.levels.map((level, idx) => ({ part, idx, ...level, partName: obj.name, icon: obj.icon })));
-    }
-
-    function renderVisual() {
-      const part = data[currentPart];
-      visual.innerHTML = art[currentPart];
-      visualCopy.innerHTML = `<h3>${part.visualTitle}</h3><p class="small">${part.visualSubtitle}</p>`;
-      visualCaption.textContent = part.caption;
-      modePill.textContent = part.name;
-    }
-
-    function renderGallery() {
-      galleryGrid.innerHTML = Object.entries(data).map(([part, obj]) => `
-        <article class="figure-card">
-          <h3>${obj.icon} ${obj.name}</h3>
-          <p class="small">${obj.visualTitle}</p>
-          <div class="stage">${art[part]}</div>
-          <p class="caption">${obj.caption}</p>
-        </article>
-      `).join('');
-    }
-
-    function renderList() {
-      const query = search.value.trim().toLowerCase();
-      const source = query ? allLevels() : data[currentPart].levels.map((x, idx) => ({ ...x, part: currentPart, idx, partName: data[currentPart].name, icon: data[currentPart].icon }));
-      const filtered = source.filter(item => !query || [item.title, item.sub, item.figures, item.theme, item.logic, item.lesson, item.partName].join(' ').toLowerCase().includes(query));
-      list.innerHTML = filtered.map(item => `
-        <button class="node ${item.part} ${item.part === currentPart && item.idx === currentIndex ? 'active' : ''}" data-open="${item.part}:${item.idx}">
-          <span class="badge">${item.n}</span>
-          <span><strong>${item.icon} ${item.title}</strong><br><span class="small">${item.sub}</span></span>
-          <span class="small">${item.partName}</span>
-        </button>
-      `).join('') || `<div class="mini">Ничего не найдено. Попробуй: Беатриче, Улисс, гордыня, свет, обман.</div>`;
-      document.querySelectorAll('[data-open]').forEach(btn => btn.addEventListener('click', () => {
-        const [part, idx] = btn.dataset.open.split(':');
-        currentPart = part;
-        currentIndex = Number(idx);
-        search.value = '';
-        syncTabs();
-        renderVisual();
-        renderList();
-        renderDetail();
-        detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }));
-    }
-
-    function renderDetail() {
-      const part = data[currentPart];
-      const item = part.levels[currentIndex];
-      detail.className = 'card panel detail fade';
-      detail.innerHTML = `
-        <div class="detail-top">
-          <div>
-            <div class="eyebrow">${part.icon} ${part.name} · уровень ${item.n}</div>
-            <h2>${item.title}</h2>
-            <p class="lead">${item.sub}</p>
-          </div>
-          <span class="pill" style="color:${part.color}">${item.theme}</span>
+    journey.innerHTML = locations.map((loc, index) => `
+      <section class="location" id="loc-${index}" data-index="${index}" style="--accent:${loc.accent}; --glow-x:${index % 2 ? '70%' : '32%'}; --glow-y:${index % 3 ? '40%' : '62%'};">
+        <div class="bg" aria-hidden="true">${art[loc.art]}</div>
+        <div class="wrap scene-grid">
+          <article class="glass scene-panel fade-in">
+            <div class="scene-index">${String(index + 1).padStart(2, '0')} · ${loc.label}</div>
+            <h2>${loc.title}</h2>
+            <p class="idea">${loc.idea}</p>
+            <p class="scene-copy">${loc.text}</p>
+            <div class="tags">${loc.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
+          </article>
+          <aside class="facts fade-in">
+            <div class="fact"><b>Что видит герой</b><p>${loc.sees}</p></div>
+            <div class="fact"><b>Что меняется внутри маршрута</b><p>${loc.change}</p></div>
+            <div class="fact"><b>Фоновое изображение</b><p>Сгенерированная SVG-сцена: ${loc.title.toLowerCase()}.</p></div>
+          </aside>
         </div>
-        <div class="detail-accent"></div>
-        <p>${part.idea}</p>
-        <div class="kv">
-          <div class="mini"><b>Кого встречаем</b><p>${item.figures}</p></div>
-          <div class="mini"><b>Как это устроено</b><p>${item.logic}</p></div>
-          <div class="mini"><b>Философская тема</b><p>${item.theme}</p></div>
-          <div class="mini"><b>Что вынести</b><p>${item.lesson}</p></div>
-        </div>
-        <div class="part-facts">
-          ${part.facts.map((fact, index) => `<div class="factline"><span class="spark">${index + 1}</span><p class="small">${fact}</p></div>`).join('')}
-        </div>
-      `;
-      window.setTimeout(() => detail.classList.remove('fade'), 260);
+      </section>
+    `).join('');
+
+    rail.innerHTML = locations.map((loc, index) => `<button type="button" data-target="loc-${index}" aria-label="${loc.title}"><span>${String(index + 1).padStart(2, '0')} · ${loc.title}</span></button>`).join('');
+
+    rail.addEventListener('click', event => {
+      const btn = event.target.closest('button[data-target]');
+      if (!btn) return;
+      document.getElementById(btn.dataset.target).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    const sections = [...document.querySelectorAll('.location')];
+    const railButtons = [...rail.querySelectorAll('button')];
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const index = Number(entry.target.dataset.index);
+        sections.forEach(section => section.classList.toggle('active', section === entry.target));
+        railButtons.forEach((button, i) => button.classList.toggle('active', i === index));
+      });
+    }, { threshold: 0.55 });
+
+    sections.forEach(section => observer.observe(section));
+    sections[0].classList.add('active');
+    railButtons[0]?.classList.add('active');
+
+    function updateProgress() {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const value = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+      progress.style.width = `${Math.min(100, Math.max(0, value))}%`;
     }
-
-    function syncTabs() {
-      buttons.forEach(btn => btn.classList.toggle('active', btn.dataset.part === currentPart));
-    }
-
-    buttons.forEach(btn => btn.addEventListener('click', () => {
-      currentPart = btn.dataset.part;
-      currentIndex = 0;
-      search.value = '';
-      syncTabs();
-      renderVisual();
-      renderList();
-      renderDetail();
-    }));
-
-    search.addEventListener('input', renderList);
-    renderGallery();
-    renderVisual();
-    renderList();
-    renderDetail();
+    updateProgress();
+    window.addEventListener('scroll', updateProgress, { passive: true });
   </script>
 </body>
 </html>
